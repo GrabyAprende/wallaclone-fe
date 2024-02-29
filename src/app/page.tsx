@@ -75,7 +75,7 @@ const LandingPage = () => {
                 >
                     <div className="mx-4 md:mx-8 mt-0 md:mt-4">
                         <h1 className="text-6xl font-bold text-gray-900 line-height-2">
-                            <span className="font-light block">Eu sem integer</span>eget magna fermentum
+                            <span className="font-light block">Eu sem integer</span>Hola mundo!!!
                         </h1>
                         <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Sed blandit libero volutpat sed cras. Fames ac turpis egestas integer. Placerat in egestas erat... </p>
                         <Button type="button" label="Get Started" rounded className="text-xl border-none mt-3 bg-blue-500 font-normal line-height-3 px-3 text-white"></Button>
