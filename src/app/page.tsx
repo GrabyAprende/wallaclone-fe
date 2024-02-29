@@ -26,7 +26,7 @@ const LandingPage = () => {
                 <div className="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
                     <Link href="/" className="flex align-items-center">
                         <img src={`/layout/images/${layoutConfig.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}.svg`} alt="Sakai Logo" height="50" className="mr-0 lg:mr-2" />
-                        <span className="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
+                        <span className="text-900 font-medium text-2xl line-height-3 mr-8">WALLACLONE</span>
                     </Link>
                     <StyleClass nodeRef={menuRef as NodeRef} selector="@next" enterClassName="hidden" leaveToClassName="hidden" hideOnOutsideClick>
                         <i ref={menuRef} className="pi pi-bars text-4xl cursor-pointer block lg:hidden text-700"></i>
@@ -35,32 +35,36 @@ const LandingPage = () => {
                         <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                             <li>
                                 <a href="#home" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Home</span>
+                                    <span>Todas las categorías</span>
                                     <Ripple />
                                 </a>
                             </li>
                             <li>
                                 <a href="#features" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Features</span>
+                                    <span>Moda y Accesorios</span>
                                     <Ripple />
                                 </a>
                             </li>
                             <li>
                                 <a href="#highlights" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Highlights</span>
+                                    <span>Motor y Accesorios</span>
                                     <Ripple />
                                 </a>
                             </li>
                             <li>
                                 <a href="#pricing" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Pricing</span>
+                                    <span>Tecnología</span>
                                     <Ripple />
                                 </a>
                             </li>
                         </ul>
                         <div className="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                            <Button label="Login" text rounded className="border-none font-light line-height-2 text-blue-500"></Button>
-                            <Button label="Register" rounded className="border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></Button>
+                            <Link href={{pathname: "/login"}}>
+                                <Button label="Login" text rounded className="border-none font-light line-height-2 text-blue-500"></Button>
+                            </Link>
+                            <Link href={{pathname: "/register"}}>
+                                <Button label="Register" rounded className="border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></Button>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -75,9 +79,9 @@ const LandingPage = () => {
                 >
                     <div className="mx-4 md:mx-8 mt-0 md:mt-4">
                         <h1 className="text-6xl font-bold text-gray-900 line-height-2">
-                            <span className="font-light block">Eu sem integer</span>Hola mundo!!!
+                            <span className="font-light block">Tu mercado virtual para comprar y vender</span>Wallaclone!!!
                         </h1>
-                        <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Sed blandit libero volutpat sed cras. Fames ac turpis egestas integer. Placerat in egestas erat... </p>
+                        <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Compra y vende artículos de segunda mano</p>
                         <Button type="button" label="Get Started" rounded className="text-xl border-none mt-3 bg-blue-500 font-normal line-height-3 px-3 text-white"></Button>
                     </div>
                     <div className="flex justify-content-center md:justify-content-end">
@@ -88,8 +92,8 @@ const LandingPage = () => {
                 <div id="features" className="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8">
                     <div className="grid justify-content-center">
                         <div className="col-12 text-center mt-8 mb-4">
-                            <h2 className="text-900 font-normal mb-2">Marvelous Features</h2>
-                            <span className="text-600 text-2xl">Placerat in egestas erat...</span>
+                            <h2 className="text-900 font-normal mb-2">Falta texto</h2>
+                            <span className="text-600 text-2xl">Falta texto</span>
                         </div>
 
                         <div className="col-12 md:col-12 lg:col-4 p-0 lg:pr-5 lg:pb-5 mt-4 lg:mt-0">
