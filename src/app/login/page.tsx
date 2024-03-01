@@ -8,9 +8,17 @@ import { Password } from 'primereact/password';
 import { LayoutContext } from '../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { FormField } from './atoms/formField';
+//import { Logo } from './atoms/Logo/logo';
+
+//los tipos de los inputs del formulario
+type Inputs = {
+    email: string;
+    password: string;
+};
 
 const LoginPage = () => {
-    const [password, setPassword] = useState(''); //almacenamiento de psw
     const [checked, setChecked] = useState(false); //almacenamiento del estado checkbox
     const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
 
@@ -18,10 +26,20 @@ const LoginPage = () => {
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
     //classNames: función que proporciona la librería de PrimeReact, genera CSS según argumentos
 
+    // useForm nos ayuda a manejar los formularios
+    const {
+        register, // registra los imputs
+        handleSubmit, // maneja los datos del formulario al hacer submit
+        formState: { errors } // manejador de errores ej: errors.email.message tiene el mensaje de error
+    } = useForm<Inputs>();
+
+    const onSubmit: SubmitHandler<Inputs> = (data) => {
+        console.log({ data })
+    }
+
     return (
         <div className={containerClassName}>
             <div className="flex flex-column align-items-center justify-content-center">
-                <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="Sakai logo" className="mb-5 w-6rem flex-shrink-0" />
                 <div
                     style={{
                         borderRadius: '56px',
@@ -31,22 +49,34 @@ const LoginPage = () => {
                 >
                     <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
                         <div className="text-center mb-5">
-                            <img src="/demo/images/login/avatar.png" alt="Image" height="50" className="mb-3" />
                             <div className="text-900 text-3xl font-medium mb-3">¡Te damos la bienvenida!</div>
-                            <span className="text-600 font-medium">Sign in para continuar</span>
                         </div>
 
-                        <div>
-                            <label htmlFor="email1" className="block text-900 text-xl font-medium mb-2">
-                                Email
-                            </label>
-                            <InputText id="email1" type="text" placeholder="Dirección de e-mail" className="w-full md:w-30rem mb-5" style={{ padding: '1rem' }} />
-
-                            <label htmlFor="password1" className="block text-900 font-medium text-xl mb-2">
-                                Contraseña
-                            </label>
-                            <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" toggleMask className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password>
-
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            {/* INPUT EMAIL */}
+                            <FormField
+                                fieldId="email"
+                                label="Email"
+                                type="email"
+                                placeholder='Dirección de email'
+                                register={register}
+                                errorMessage={errors.email?.message || ""}
+                                rules={{ required: "Email requerido" }}
+                            />
+                        
+                            {/* PASSWORD */}
+                            <FormField
+                                fieldId="password"
+                                label="Contraseña"
+                                type="password"
+                                placeholder='Contraseña'
+                                register={register}
+                                errorMessage={errors.password?.message || ""}
+                                rules={{ required: "Contraseña requerida",
+                                minLength: { value: 8, message: "Mínimo 8 caracteres"},
+                            }}
+                            />
+                            {/* RECORDAR CONTRASEÑA */}
                             <div className="flex align-items-center justify-content-between mb-5 gap-5">
                                 <div className="flex align-items-center">
                                     <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
@@ -56,13 +86,16 @@ const LoginPage = () => {
                                     ¿Has olvidado tu contraseña?
                                 </a>
                             </div>
-                            <Button label="Sign In" className="w-full p-3 text-xl" onClick={() => router.push('/')}></Button>
-                        </div>
+                            
+                            {/* BOTON PARA ACCEDER */}
+                            <Button label="Acceder a Wallaclone" className="w-full p-3 text-xl" type='submit'></Button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     );
+
 };
 
 export default LoginPage;

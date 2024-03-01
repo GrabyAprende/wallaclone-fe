@@ -10,6 +10,7 @@ import { Divider } from 'primereact/divider';
 import { LayoutContext } from '../layout/context/layoutcontext';
 import { NodeRef } from '@/types';
 import { classNames } from 'primereact/utils';
+import { InputText } from 'primereact/inputtext';
 
 const LandingPage = () => {
     const [isHidden, setIsHidden] = useState(false);
@@ -31,6 +32,12 @@ const LandingPage = () => {
                     <StyleClass nodeRef={menuRef as NodeRef} selector="@next" enterClassName="hidden" leaveToClassName="hidden" hideOnOutsideClick>
                         <i ref={menuRef} className="pi pi-bars text-4xl cursor-pointer block lg:hidden text-700"></i>
                     </StyleClass>
+                    <div className="col-12 mb-2 lg:col-4 lg:mb-0">
+                            <span className="p-input-icon-right">
+                                <InputText type="text" placeholder="Search" />
+                                <i className="pi pi-search" />
+                            </span>
+                        </div>
                     <div className={classNames('align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2', { hidden: isHidden })} style={{ top: '100%' }}>
                         <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                             <li>
@@ -82,7 +89,7 @@ const LandingPage = () => {
                             <span className="font-light block">Tu mercado virtual para comprar y vender</span>Wallaclone!!!
                         </h1>
                         <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Compra y vende artículos de segunda mano</p>
-                        <Button type="button" label="Get Started" rounded className="text-xl border-none mt-3 bg-blue-500 font-normal line-height-3 px-3 text-white"></Button>
+                        <Button type="button" label="Crear un anuncio" rounded className="text-xl border-none mt-3 bg-blue-500 font-normal line-height-3 px-3 text-white"></Button>
                     </div>
                     <div className="flex justify-content-center md:justify-content-end">
                         <img src="/images/screen-1.png" alt="Hero Image" className="w-9 md:w-auto" />
@@ -105,7 +112,7 @@ const LandingPage = () => {
                                     background: 'linear-gradient(90deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2)), linear-gradient(180deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2))'
                                 }}
                             >
-                                <div className="p-3 surface-card h-full" style={{ borderRadius: '8px' }}>
+                                {/*<div className="p-3 surface-card h-full" style={{ borderRadius: '8px' }}>
                                     <div
                                         className="flex align-items-center justify-content-center bg-yellow-200 mb-3"
                                         style={{
@@ -116,8 +123,9 @@ const LandingPage = () => {
                                     >
                                         <i className="pi pi-fw pi-users text-2xl text-yellow-700"></i>
                                     </div>
-                                    <h5 className="mb-2 text-900">Easy to Use</h5>
-                                    <span className="text-600">Posuere morbi leo urna molestie.</span>
+                                    <h5 className="mb-2 text-900">Falta texto
+                                    </h5>
+                                    <span className="text-600">Falta texto</span>
                                 </div>
                             </div>
                         </div>
@@ -142,8 +150,8 @@ const LandingPage = () => {
                                     >
                                         <i className="pi pi-fw pi-palette text-2xl text-cyan-700"></i>
                                     </div>
-                                    <h5 className="mb-2 text-900">Fresh Design</h5>
-                                    <span className="text-600">Semper risus in hendrerit.</span>
+                                    <h5 className="mb-2 text-900">Falta texto</h5>
+                                    <span className="text-600">Falta texto</span>
                                 </div>
                             </div>
                         </div>
@@ -168,8 +176,8 @@ const LandingPage = () => {
                                     >
                                         <i className="pi pi-fw pi-map text-2xl text-indigo-700"></i>
                                     </div>
-                                    <h5 className="mb-2 text-900">Well Documented</h5>
-                                    <span className="text-600">Non arcu risus quis varius quam quisque.</span>
+                                    <h5 className="mb-2 text-900">Falta texto</h5>
+                                    <span className="text-600">Falta texto</span>
                                 </div>
                             </div>
                         </div>
@@ -530,7 +538,7 @@ const LandingPage = () => {
                                     <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">Get Started</a>
                                     <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">Learn</a>
                                     <a className="line-height-3 text-xl block cursor-pointer text-700">Case Studies</a>
-                                </div>
+                                </div> 
 
                                 <div className="col-12 md:col-3 mt-4 md:mt-0">
                                     <h4 className="font-medium text-2xl line-height-3 mb-3 text-900">Community</h4>
@@ -541,7 +549,7 @@ const LandingPage = () => {
                                     </a>
                                     <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">FAQ</a>
                                     <a className="line-height-3 text-xl block cursor-pointer text-700">Blog</a>
-                                </div>
+                                </div>*/}
 
                                 <div className="col-12 md:col-3 mt-4 md:mt-0">
                                     <h4 className="font-medium text-2xl line-height-3 mb-3 text-900">Legal</h4>
