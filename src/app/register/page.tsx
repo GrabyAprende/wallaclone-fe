@@ -7,7 +7,8 @@ import { LayoutContext } from "../../layout/context/layoutcontext";
 //import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { FormField } from "./atoms/formField";
+import { FormField } from "../components/form/formField";
+
 
 type Inputs = {
     username: string;
@@ -64,7 +65,7 @@ const SignUpPage = () => {
                             {/* INPUT USERNAME */}
                             <FormField
                                 fieldId="username"
-                                label="Username"
+                                label="Usuario"
                                 type="text"
                                 placeholder="Nombre de usuario"
                                 register={register}
