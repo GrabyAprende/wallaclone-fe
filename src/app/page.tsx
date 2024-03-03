@@ -1,16 +1,16 @@
-'use client';
+"use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useContext, useRef, useState } from 'react';
-import Link from 'next/link';
+import React, { useContext, useRef, useState } from "react";
+import Link from "next/link";
 
-import { StyleClass } from 'primereact/styleclass';
-import { Button } from 'primereact/button';
-import { Ripple } from 'primereact/ripple';
-import { Divider } from 'primereact/divider';
-import { LayoutContext } from '../layout/context/layoutcontext';
-import { NodeRef } from '@/types';
-import { classNames } from 'primereact/utils';
-import { InputText } from 'primereact/inputtext';
+import { StyleClass } from "primereact/styleclass";
+import { Button } from "primereact/button";
+import { Ripple } from "primereact/ripple";
+import { Divider } from "primereact/divider";
+import { LayoutContext } from "../layout/context/layoutcontext";
+import { NodeRef } from "@/types";
+import { classNames } from "primereact/utils";
+import { InputText } from "primereact/inputtext";
 
 const LandingPage = () => {
     const [isHidden, setIsHidden] = useState(false);
@@ -18,7 +18,7 @@ const LandingPage = () => {
     const menuRef = useRef<HTMLElement | null>(null);
 
     const toggleMenuItemClick = () => {
-        setIsHidden((prevState) => !prevState);
+        setIsHidden(prevState => !prevState);
     };
 
     return (
@@ -26,51 +26,92 @@ const LandingPage = () => {
             <div id="home" className="landing-wrapper overflow-hidden">
                 <div className="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
                     <Link href="/" className="flex align-items-center">
-                        <img src={`/layout/images/${layoutConfig.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}.svg`} alt="Sakai Logo" height="50" className="mr-0 lg:mr-2" />
-                        <span className="text-900 font-medium text-2xl line-height-3 mr-8">WALLACLONE</span>
+                        <img
+                            src={`/layout/images/${
+                                layoutConfig.colorScheme === "light"
+                                    ? "logo-dark"
+                                    : "logo-white"
+                            }.svg`}
+                            alt="Sakai Logo"
+                            height="50"
+                            className="mr-0 lg:mr-2"
+                        />
+                        <span className="text-900 font-medium text-2xl line-height-3 mr-8">
+                            WALLACLONE
+                        </span>
                     </Link>
-                    <StyleClass nodeRef={menuRef as NodeRef} selector="@next" enterClassName="hidden" leaveToClassName="hidden" hideOnOutsideClick>
-                        <i ref={menuRef} className="pi pi-bars text-4xl cursor-pointer block lg:hidden text-700"></i>
+                    <StyleClass
+                        nodeRef={menuRef as NodeRef}
+                        selector="@next"
+                        enterClassName="hidden"
+                        leaveToClassName="hidden"
+                        hideOnOutsideClick
+                    >
+                        <i
+                            ref={menuRef}
+                            className="pi pi-bars text-4xl cursor-pointer block lg:hidden text-700"
+                        ></i>
                     </StyleClass>
                     <div className="col-12 mb-2 lg:col-4 lg:mb-0">
-                            <span className="p-input-icon-right">
-                                <InputText type="text" placeholder="Search" />
-                                <i className="pi pi-search" />
-                            </span>
-                        </div>
-                    <div className={classNames('align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2', { hidden: isHidden })} style={{ top: '100%' }}>
+                        <span className="p-input-icon-right">
+                            <InputText type="text" placeholder="Search" />
+                            <i className="pi pi-search" />
+                        </span>
+                    </div>
+                    <div
+                        className={classNames(
+                            "align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2",
+                            { hidden: isHidden }
+                        )}
+                        style={{ top: "100%" }}
+                    >
                         <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                             <li>
-                                <a href="#home" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                                <a
+                                    href="#home"
+                                    onClick={toggleMenuItemClick}
+                                    className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3"
+                                >
                                     <span>Todas las categorías</span>
                                     <Ripple />
                                 </a>
                             </li>
                             <li>
-                                <a href="#features" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                                <a
+                                    href="#features"
+                                    onClick={toggleMenuItemClick}
+                                    className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3"
+                                >
                                     <span>Moda y Accesorios</span>
                                     <Ripple />
                                 </a>
                             </li>
                             <li>
-                                <a href="#highlights" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                                <a
+                                    href="#highlights"
+                                    onClick={toggleMenuItemClick}
+                                    className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3"
+                                >
                                     <span>Motor y Accesorios</span>
-                                    <Ripple />
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#pricing" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Tecnología</span>
                                     <Ripple />
                                 </a>
                             </li>
                         </ul>
                         <div className="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                            <Link href={{pathname: "/login"}}>
-                                <Button label="Login" text rounded className="border-none font-light line-height-2 text-blue-500"></Button>
+                            <Link href={{ pathname: "/login" }}>
+                                <Button
+                                    label="Login"
+                                    text
+                                    rounded
+                                    className="border-none font-light line-height-2 text-blue-500"
+                                ></Button>
                             </Link>
-                            <Link href={{pathname: "/register"}}>
-                                <Button label="Register" rounded className="border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></Button>
+                            <Link href={{ pathname: "/register" }}>
+                                <Button
+                                    label="Register"
+                                    rounded
+                                    className="border-none ml-5 font-light line-height-2 bg-blue-500 text-white"
+                                ></Button>
                             </Link>
                         </div>
                     </div>
@@ -80,36 +121,59 @@ const LandingPage = () => {
                     id="hero"
                     className="flex flex-column pt-4 px-4 lg:px-8 overflow-hidden"
                     style={{
-                        background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #EEEFAF 0%, #C3E3FA 100%)',
-                        clipPath: 'ellipse(150% 87% at 93% 13%)'
+                        background:
+                            "linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #EEEFAF 0%, #C3E3FA 100%)",
+                        clipPath: "ellipse(150% 87% at 93% 13%)",
                     }}
                 >
                     <div className="mx-4 md:mx-8 mt-0 md:mt-4">
                         <h1 className="text-6xl font-bold text-gray-900 line-height-2">
-                            <span className="font-light block">Tu mercado virtual para comprar y vender</span>Wallaclone!!!
+                            <span className="font-light block">
+                                Tu mercado virtual para comprar y vender
+                            </span>
+                            Wallaclone!!!
                         </h1>
-                        <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Compra y vende artículos de segunda mano</p>
-                        <Button type="button" label="Crear un anuncio" rounded className="text-xl border-none mt-3 bg-blue-500 font-normal line-height-3 px-3 text-white"></Button>
+                        <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">
+                            Compra y vende artículos de segunda mano
+                        </p>
+                        <Button
+                            type="button"
+                            label="Crear un anuncio"
+                            rounded
+                            className="text-xl border-none mt-3 bg-blue-500 font-normal line-height-3 px-3 text-white"
+                        ></Button>
                     </div>
                     <div className="flex justify-content-center md:justify-content-end">
-                        <img src="/images/screen-1.png" alt="Hero Image" className="w-9 md:w-auto" />
+                        <img
+                            src="/images/screen-1.png"
+                            alt="Hero Image"
+                            className="w-9 md:w-auto"
+                        />
                     </div>
                 </div>
 
-                <div id="features" className="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8">
+                <div
+                    id="features"
+                    className="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8"
+                >
                     <div className="grid justify-content-center">
                         <div className="col-12 text-center mt-8 mb-4">
-                            <h2 className="text-900 font-normal mb-2">Falta texto</h2>
-                            <span className="text-600 text-2xl">Falta texto</span>
+                            <h2 className="text-900 font-normal mb-2">
+                                Falta texto
+                            </h2>
+                            <span className="text-600 text-2xl">
+                                Falta texto
+                            </span>
                         </div>
 
                         <div className="col-12 md:col-12 lg:col-4 p-0 lg:pr-5 lg:pb-5 mt-4 lg:mt-0">
                             <div
                                 style={{
-                                    height: '160px',
-                                    padding: '2px',
-                                    borderRadius: '10px',
-                                    background: 'linear-gradient(90deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2)), linear-gradient(180deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2))'
+                                    height: "160px",
+                                    padding: "2px",
+                                    borderRadius: "10px",
+                                    background:
+                                        "linear-gradient(90deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2)), linear-gradient(180deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2))",
                                 }}
                             >
                                 {/*<div className="p-3 surface-card h-full" style={{ borderRadius: '8px' }}>
@@ -552,10 +616,18 @@ const LandingPage = () => {
                                 </div>*/}
 
                                 <div className="col-12 md:col-3 mt-4 md:mt-0">
-                                    <h4 className="font-medium text-2xl line-height-3 mb-3 text-900">Legal</h4>
-                                    <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">Brand Policy</a>
-                                    <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">Privacy Policy</a>
-                                    <a className="line-height-3 text-xl block cursor-pointer text-700">Terms of Service</a>
+                                    <h4 className="font-medium text-2xl line-height-3 mb-3 text-900">
+                                        Legal
+                                    </h4>
+                                    <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">
+                                        Brand Policy
+                                    </a>
+                                    <a className="line-height-3 text-xl block cursor-pointer mb-2 text-700">
+                                        Privacy Policy
+                                    </a>
+                                    <a className="line-height-3 text-xl block cursor-pointer text-700">
+                                        Terms of Service
+                                    </a>
                                 </div>
                             </div>
                         </div>
