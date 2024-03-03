@@ -8,6 +8,7 @@ import { LayoutContext } from "../../layout/context/layoutcontext";
 import { classNames } from "primereact/utils";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { FormField } from "../components/form/formField";
+import isStrongPassword from "validator/lib/isStrongPassword";
 
 
 type Inputs = {
@@ -72,6 +73,10 @@ const SignUpPage = () => {
                                 errorMessage={errors.username?.message || ""}
                                 rules={{
                                     required: "Nombre de usuario requerido",
+                                    minLength: {
+                                        value: 3,
+                                        message: "Mínimo 3 caracteres",
+                                    },
                                 }}
                             />
 
@@ -100,6 +105,7 @@ const SignUpPage = () => {
                                         value: 8,
                                         message: "Mínimo 8 caracteres",
                                     },
+                                    validate: value => isStrongPassword(value, {minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1}) || "La contraseña debe tener mayúscula, número, símbolos y minúscula"
                                 }}
                             />
 
