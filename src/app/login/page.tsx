@@ -9,7 +9,7 @@ import { LayoutContext } from '../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { FormField } from './atoms/formField';
+import { FormField } from '../components/form/formField';
 //import { Logo } from './atoms/Logo/logo';
 
 //los tipos de los inputs del formulario
