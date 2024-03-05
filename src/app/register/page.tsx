@@ -9,6 +9,7 @@ import { classNames } from "primereact/utils";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { FormField } from "../components/form/formField";
 import isStrongPassword from "validator/lib/isStrongPassword";
+import Link from "next/link";
 
 
 type Inputs = {
@@ -57,8 +58,8 @@ const SignUpPage = () => {
                         style={{ borderRadius: "53px" }}
                     >
                         <div className="text-center mb-5">
-                            <div className="text-900 text-3xl font-medium mb-3">
-                                ¡Te damos la bienvenida!
+                            <div className="text-700 text-3xl font-medium mb-3">
+                                ¡Compra y vende cerca ti!
                             </div>
                         </div>
 
@@ -130,10 +131,14 @@ const SignUpPage = () => {
 
                             {/* BOTON PARA REGISTRARSE */}
                             <Button
-                                label="Registrate en Wallaclone"
+                                label="Regístrate en Wallaclone"
                                 className="w-full p-3 text-xl"
                                 type="submit"
                             ></Button>
+                            <div className="flex justify-content-center mt-3">
+                                <span className="font-extralight text-1xl text-black-500 mr-2">¿Ya tienes una cuenta?</span> 
+                                <Link href="/login" className="cursor-pointer">Iniciar sesión</Link>        
+                            </div>
                         </form>
                     </div>
                 </div>
