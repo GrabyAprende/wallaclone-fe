@@ -14,7 +14,7 @@ import { InputText } from "primereact/inputtext";
 import { Logo } from "./components/form/logo";
 import Image from "next/image";
 
-const LandingPage = () => {
+const HomePage = () => {
     const [isHidden, setIsHidden] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
     const menuRef = useRef<HTMLElement | null>(null);
@@ -25,7 +25,8 @@ const LandingPage = () => {
 
     return (
         <div className="surface-0 flex justify-content-center">
-            <div id="home" className="landing-wrapper overflow-hidden">
+            <div id="home" className="landing-wrapper overflow-hidden w-full">
+                {/* HEADER */} 
                 <div className="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
                     <Link href="/" className="flex align-items-center">
                         <Logo />
@@ -90,7 +91,7 @@ const LandingPage = () => {
                             </li>
                             </ul>
                         </div>
-                        {/* <div className="flex lg:align-items-center flex-column gap-3"> */}
+
                         <div className="flex justify-content-end py-3 md:flex-column md:ml-5">
                             <Link href={{ pathname: "/login" }} className="flex justify-content-center">
                                 <Button
@@ -111,6 +112,7 @@ const LandingPage = () => {
                     </div>
                 </div>
 
+                {/* HERO */} 
                 <div
                     id="hero"
                     className="flex flex-column pt-4 px-4 lg:px-8 overflow-hidden"
@@ -130,7 +132,7 @@ const LandingPage = () => {
                         <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">
                         y Descubre Ofertas Únicas en Artículos Nuevos y Usados
                         </p>
-                        <Link href={{ pathname: "/login" }}>
+                        <Link href={{ pathname: "/register" }}>
                         <Button
                             type="button"
                             label="¿Crear anuncio?"
@@ -142,13 +144,26 @@ const LandingPage = () => {
                     <div className="flex justify-content-center md:justify-content-end mt-3">
                         <Image
                             fill
-                            src="/images/screen-1.jpeg"
+                            src="/images/screen-1.webp"
                             alt="Hero Image"
                             className="relative w-9 md:w-6"
                         />
                     </div>
                 </div>
 
+                {/* MAIN */}
+                <div id="highlights" className="py-4 px-4 lg:px-8 mx-0 my-6 lg:mx-8">
+                    <div className="text-center">
+                        <h2 className="text-900 font-normal mb-2">Anuncios</h2>
+                        <span className="text-600 text-2xl">Un subtitulo</span>
+                    </div>
+
+                    <div className="grid mt-8 pb-2 md:pb-8">
+                    </div>
+                </div>
+
+
+                    {/* FOOTER */}
                 <div className="py-4 px-4 mx-0 mt-8 lg:mx-8">
                     <div className="grid justify-content-between">
                         <div className="col-12 md:col-2" style={{ marginTop: '-1.5rem' }}>
@@ -189,4 +204,4 @@ const LandingPage = () => {
     );
 };
 
-export default LandingPage;
+export default HomePage;
