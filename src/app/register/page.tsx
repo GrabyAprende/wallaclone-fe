@@ -135,9 +135,9 @@ const SignUpPage = () => {
                                 className="w-full p-3 text-xl"
                                 type="submit"
                             ></Button>
-                            <div className="flex justify-content-center mt-3">
-                                <span className="font-extralight text-1xl text-black-500 mr-2">¿Ya tienes una cuenta?</span> 
-                                <Link href="/login" className="cursor-pointer">Iniciar sesión</Link>        
+                            <div className="flex justify-content-center mt-4">
+                                <span className="font-extralight text-2xl text-black-500 mr-2">¿Ya tienes una cuenta?</span> 
+                                <Link href="/login" className="text-2xl cursor-pointer">Inicia sesión</Link>        
                             </div>
                         </form>
                     </div>

@@ -10,6 +10,7 @@ import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormField } from '../components/form/formField';
+import Link from 'next/link';
 //import { Logo } from './atoms/Logo/logo';
 
 //los tipos de los inputs del formulario
@@ -89,6 +90,10 @@ const LoginPage = () => {
                             
                             {/* BOTON PARA ACCEDER */}
                             <Button label="Acceder a Wallaclone" className="w-full p-3 text-xl" type='submit'></Button>
+                            <div className="flex justify-content-center mt-4">
+                                <span className="font-extralight text-1xl text-black-500 mr-2">¿Aún no eres miembro?</span> 
+                                <Link href="/register" className="text-1xl cursor-pointer">Regístrate</Link>        
+                            </div>
                         </form>
                     </div>
                 </div>
