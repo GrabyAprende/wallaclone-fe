@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { ProductService } from './ProductService';
 import type { Demo } from '@/types';
 import Image from 'next/image';
+import { link } from 'fs';
+import Link from 'next/link';
 
 export const AdvertsList = () => {
     const [products, setProducts] = useState<Demo.Product[]>([]);
@@ -37,6 +39,7 @@ export const AdvertsList = () => {
     const carouselItemTemplate = (product: Demo.Product) => {
         return (
 
+        <Link href={{pathname: `/anuncios/${product.id}`}}>
             <div className="border-1 surface-border border-round m-1 text-center py-5">
                 <div className="mb-3">
                     {/* TODO: LAS IMAGENES PEQUEÑAS TIENEN QUE SER 177PX POR 118 */}
@@ -44,15 +47,16 @@ export const AdvertsList = () => {
                 </div>
                 <div>
                     <h4 className="p-mb-1">{product.name}</h4>
-                    <h6 className="mt-0 mb-3">${product.price}</h6>
-                    <span className={`product-badge status-${product.inventoryStatus?.toLowerCase()}`}>{product.inventoryStatus}</span>
+                    <h6 className="mt-0 mb-3">{product.price} €</h6>
+                    {/*<span className={`product-badge status-${product.inventoryStatus?.toLowerCase()}`}>{product.inventoryStatus}</span>
                     <div className="car-buttons mt-5">
                         <Button type="button" className="mr-2" rounded icon="pi pi-search"></Button>
                         <Button type="button" className="mr-2" severity="success" rounded icon="pi pi-star"></Button>
                         <Button type="button" severity="help" rounded icon="pi pi-cog"></Button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
+        </Link>
         );
     };
 
