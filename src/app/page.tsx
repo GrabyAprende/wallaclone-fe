@@ -155,11 +155,10 @@ const HomePage = () => {
                 {/* MAIN */}
                 <div id="highlights" className="py-4 px-4 lg:px-8 mx-0 my-6 lg:mx-8">
                     <div className="text-center">
-                        <h2 className="text-900 font-normal mb-2">Powerful Everywhere</h2>
-                        <span className="text-600 text-2xl">Amet consectetur adipiscing elit...</span>
+                        <h2 className="text-900 font-normal mb-2">Titulo</h2>
                     </div>
 
-                    <div className="grid mt-8 pb-2 md:pb-8">
+                    <div className="grid mt-2 pb-2 md:pb-8">
                         <AdvertsList />
                     </div>
                 </div>
