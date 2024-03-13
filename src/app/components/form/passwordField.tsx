@@ -23,6 +23,8 @@ export const PasswordField: FC<Props> = ({
     rules,
     toggleMask = false
 }) => {
+    const {ref, ...rest} = register(fieldId, rules);
+
     return (
         <div className="mb-5">
             <label
@@ -32,15 +34,17 @@ export const PasswordField: FC<Props> = ({
                 {label}
             </label>
             <Password
-                id={fieldId}
+                inputRef={ref}
+                inputId={fieldId}
                 placeholder={placeholder}
                 toggleMask={toggleMask}
                 feedback={false}
                 inputClassName={classNames("w-full", "md:w-30rem", "p-3", {
                     "p-invalid": !!errorMessage,
                 })}
-                {...register(fieldId, rules)}
+                {...rest}
             />
+
             {!!errorMessage && (
                 <div>
                     {" "}
@@ -50,5 +54,3 @@ export const PasswordField: FC<Props> = ({
         </div>
     );
 };
-
-{/* <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" toggleMask className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password> */}
