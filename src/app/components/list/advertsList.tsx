@@ -1,16 +1,42 @@
-'use client';
-
-import { Button } from 'primereact/button';
+// import { Button } from 'primereact/button';
 import { Carousel } from 'primereact/carousel';
-import React, { useEffect, useState } from 'react';
-import { ProductService } from './ProductService';
-import type { Demo } from '@/types';
+// import React, { useEffect, useState } from 'react';
+// import { ProductService } from './ProductService';
+// import type { Demo } from '@/types';
 import Image from 'next/image';
-import { link } from 'fs';
+// import { link } from 'fs';
 import Link from 'next/link';
+// import { error } from 'console';
 
-export const AdvertsList = () => {
-    const [products, setProducts] = useState<Demo.Product[]>([]);
+async function getData() {
+    const res = await fetch("http://35.169.246.52/api/adverts");
+
+    if (!res.ok){
+        console.log("error")
+    }
+
+    return res.json()
+}
+
+// async function getData() {
+//     try {
+//         const response = await axios("http://35.169.246.52/api/adverts")
+        
+//         return response.data as Advert[];
+
+//     } catch (err) {
+//         console.error({err})
+//         return []
+//     }
+// }
+
+// export const AdvertsListFetch = async () => {
+export default async function AdvertsListFetch(){
+    // const [products, setProducts] = useState<Demo.Product[]>([]);
+
+    const products = await getData();
+
+    // useEffect(() => console.log({ data }), [data])
 
     const carouselResponsiveOptions = [
         {
@@ -30,30 +56,24 @@ export const AdvertsList = () => {
         }
     ];
 
-    useEffect(() => {
-        // TODO: CUANDO USEMOS EL BACKEND, BORRAR PRODUCTSERVICE 
-        ProductService.getProductsSmall().then((products) => setProducts(products));
+    // useEffect(() => {
+    //     // TODO: CUANDO USEMOS EL BACKEND, BORRAR PRODUCTSERVICE 
+    //     ProductService.getProductsSmall().then((products) => setProducts(products));
 
-    }, []);
+    // }, []);
 
-    const carouselItemTemplate = (product: Demo.Product) => {
+    const carouselItemTemplate = (product: any) => {
         return (
 
-        <Link href={{pathname: `/anuncios/${product.id}`}}>
+        <Link href={{pathname: `/adverts/${product._id}`}}>
             <div className="border-1 surface-border border-round m-1 text-center py-5">
                 <div className="mb-3">
                     {/* TODO: LAS IMAGENES PEQUEÑAS TIENEN QUE SER 177PX POR 118 */}
-                    <Image width={177} height={118} src={`/photo/${product.image}`} alt={product.name} className="shadow-2" />
+                    <Image width={177} height={118} src={product.image} alt={product.name} className="shadow-2" />
                 </div>
                 <div>
                     <h4 className="p-mb-1">{product.name}</h4>
                     <h6 className="mt-0 mb-3">{product.price} €</h6>
-                    {/*<span className={`product-badge status-${product.inventoryStatus?.toLowerCase()}`}>{product.inventoryStatus}</span>
-                    <div className="car-buttons mt-5">
-                        <Button type="button" className="mr-2" rounded icon="pi pi-search"></Button>
-                        <Button type="button" className="mr-2" severity="success" rounded icon="pi pi-star"></Button>
-                        <Button type="button" severity="help" rounded icon="pi pi-cog"></Button>
-                    </div> */}
                 </div>
             </div>
         </Link>
@@ -66,5 +86,3 @@ export const AdvertsList = () => {
             </div>
     );
 };
-
-

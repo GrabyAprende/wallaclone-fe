@@ -13,7 +13,7 @@ import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { Logo } from "./components/form/logo";
 import Image from "next/image";
-import { AdvertsList } from "./components/list/advertsList";
+import AdvertsList from "./components/list/advertsList";
 
 const HomePage = () => {
     const [isHidden, setIsHidden] = useState(false);
