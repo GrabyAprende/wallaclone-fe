@@ -1,4 +1,5 @@
-import { InputText } from "primereact/inputtext";
+
+import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
 import { FC } from "react";
 import { RegisterOptions, UseFormRegister } from "react-hook-form";
@@ -6,21 +7,21 @@ import { RegisterOptions, UseFormRegister } from "react-hook-form";
 interface Props {
     fieldId: string;
     label: string;
-    type: "text" | "password" | "email" | "number";
     placeholder: string;
     register: UseFormRegister<any>;
     errorMessage: string;
     rules?: RegisterOptions<any, any> | undefined;
+    toggleMask?: boolean;
 }
 
-export const FormField: FC<Props> = ({
+export const PasswordField: FC<Props> = ({
     fieldId,
     label,
-    type,
     placeholder,
     register,
     errorMessage,
     rules,
+    toggleMask = false
 }) => {
     return (
         <div className="mb-5">
@@ -30,11 +31,12 @@ export const FormField: FC<Props> = ({
             >
                 {label}
             </label>
-            <InputText
+            <Password
                 id={fieldId}
-                type={type}
                 placeholder={placeholder}
-                className={classNames("w-full", "md:w-30rem", "p-3", {
+                toggleMask={toggleMask}
+                feedback={false}
+                inputClassName={classNames("w-full", "md:w-30rem", "p-3", {
                     "p-invalid": !!errorMessage,
                 })}
                 {...register(fieldId, rules)}
@@ -48,3 +50,5 @@ export const FormField: FC<Props> = ({
         </div>
     );
 };
+
+{/* <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" toggleMask className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password> */}

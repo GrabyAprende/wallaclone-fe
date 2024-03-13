@@ -10,6 +10,7 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { FormField } from "../components/form/formField";
 import isStrongPassword from "validator/lib/isStrongPassword";
 import Link from "next/link";
+import { PasswordField } from "../components/form/passwordField";
 
 
 type Inputs = {
@@ -93,13 +94,13 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD */}
-                            <FormField
+                            <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
-                                type="password"
                                 placeholder="Contraseña"
                                 register={register}
                                 errorMessage={errors.password?.message || ""}
+                                toggleMask
                                 rules={{
                                     required: "Contraseña requerida",
                                     minLength: {
@@ -111,15 +112,15 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD CONFIRMATION */}
-                            <FormField
+                            <PasswordField
                                 fieldId="confirmPassword"
                                 label="Repite la contraseña"
-                                type="password"
                                 placeholder="Repite la contraseña"
                                 register={register}
                                 errorMessage={
                                     errors.confirmPassword?.message || ""
                                 }
+                                toggleMask
                                 rules={{
                                     required:
                                         "Confirmación de Password requerida",

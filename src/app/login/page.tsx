@@ -11,6 +11,7 @@ import { classNames } from 'primereact/utils';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormField } from '../components/form/formField';
 import Link from 'next/link';
+import { PasswordField } from '../components/form/passwordField';
 //import { Logo } from './atoms/Logo/logo';
 
 //los tipos de los inputs del formulario
@@ -66,13 +67,13 @@ const LoginPage = () => {
                             />
                         
                             {/* PASSWORD */}
-                            <FormField
+                            <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
-                                type="password"
                                 placeholder='Contraseña'
                                 register={register}
                                 errorMessage={errors.password?.message || ""}
+                                toggleMask
                                 rules={{ required: "Contraseña requerida",
                                 minLength: { value: 8, message: "Mínimo 8 caracteres"},
                             }}
