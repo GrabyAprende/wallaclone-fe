@@ -1,6 +1,6 @@
 "use client";
 
-import { Anuncio } from "@/types/general.types";
+import { Advert } from "@/types/general.types";
 import { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { classNames } from "primereact/utils";
@@ -41,7 +41,7 @@ const tags = productDetails.tags.map((tag, index) => (
 ));
 
 const AdvertDetail: FC<Props> = ({ params }) => {
-    const [product, setProduct] = useState<Anuncio | null>(null);
+    const [product, setProduct] = useState<Advert | null>(null);
 
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
