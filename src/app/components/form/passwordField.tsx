@@ -1,4 +1,5 @@
-import { InputText } from "primereact/inputtext";
+
+import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
 import { FC } from "react";
 import { RegisterOptions, UseFormRegister } from "react-hook-form";
@@ -6,22 +7,24 @@ import { RegisterOptions, UseFormRegister } from "react-hook-form";
 interface Props {
     fieldId: string;
     label: string;
-    type: "text" | "password" | "email" | "number";
     placeholder: string;
     register: UseFormRegister<any>;
     errorMessage: string;
     rules?: RegisterOptions<any, any> | undefined;
+    toggleMask?: boolean;
 }
 
-export const FormField: FC<Props> = ({
+export const PasswordField: FC<Props> = ({
     fieldId,
     label,
-    type,
     placeholder,
     register,
     errorMessage,
     rules,
+    toggleMask = false
 }) => {
+    const {ref, ...rest} = register(fieldId, rules);
+
     return (
         <div className="mb-5">
             <label
@@ -30,15 +33,18 @@ export const FormField: FC<Props> = ({
             >
                 {label}
             </label>
-            <InputText
-                id={fieldId}
-                type={type}
+            <Password
+                inputRef={ref}
+                inputId={fieldId}
                 placeholder={placeholder}
-                className={classNames("w-full", "md:w-30rem", "p-3", {
+                toggleMask={toggleMask}
+                feedback={false}
+                inputClassName={classNames("w-full", "md:w-30rem", "p-3", {
                     "p-invalid": !!errorMessage,
                 })}
-                {...register(fieldId, rules)}
+                {...rest}
             />
+
             {!!errorMessage && (
                 <div>
                     {" "}

@@ -11,11 +11,12 @@ import { classNames } from 'primereact/utils';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormField } from '../components/form/formField';
 import Link from 'next/link';
+import { PasswordField } from '../components/form/passwordField';
 //import { Logo } from './atoms/Logo/logo';
 
 //los tipos de los inputs del formulario
 type Inputs = {
-    email: string;
+    username: string;
     password: string;
 };
 
@@ -34,9 +35,28 @@ const LoginPage = () => {
         formState: { errors } // manejador de errores ej: errors.email.message tiene el mensaje de error
     } = useForm<Inputs>();
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log({ data })
-    }
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        const { username, password } = data
+        
+        try {
+            const response = await fetch('http://35.169.246.52/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username, password
+                })
+            })
+            if (response.ok) {
+                return router.push('/')
+            } else {
+                const data = await response.json();
+                console.log({ error: data.message })
+            }
+            
+        } catch (err) {
+            console.log(err)
+        }
+    };
 
     return (
         <div className={containerClassName}>
@@ -56,23 +76,23 @@ const LoginPage = () => {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             {/* INPUT EMAIL */}
                             <FormField
-                                fieldId="email"
-                                label="Email"
-                                type="email"
-                                placeholder='Dirección de email'
+                                fieldId="username"
+                                label="Usuario"
+                                type="text"
+                                placeholder='Tu nombre de usuario'
                                 register={register}
-                                errorMessage={errors.email?.message || ""}
-                                rules={{ required: "Email requerido" }}
+                                errorMessage={errors.username?.message || ""}
+                                rules={{ required: "Nombre de usuario requerido" }}
                             />
                         
                             {/* PASSWORD */}
-                            <FormField
+                            <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
-                                type="password"
                                 placeholder='Contraseña'
                                 register={register}
                                 errorMessage={errors.password?.message || ""}
+                                toggleMask
                                 rules={{ required: "Contraseña requerida",
                                 minLength: { value: 8, message: "Mínimo 8 caracteres"},
                             }}
