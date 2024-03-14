@@ -2,14 +2,13 @@
 import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
 import { Button } from "primereact/button";
-//import { Password } from "primereact/password";
 import { LayoutContext } from "../../layout/context/layoutcontext";
-//import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { FormField } from "../components/form/formField";
 import isStrongPassword from "validator/lib/isStrongPassword";
 import Link from "next/link";
+import { PasswordField } from "../components/form/passwordField";
 
 
 type Inputs = {
@@ -38,8 +37,26 @@ const SignUpPage = () => {
 
     const password = watch("password"); //para asegurarme que las passwords sean las mismas
 
-    const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log({ data });
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        const { username, email, password, confirmPassword } = data 
+
+        try {
+            const response = await fetch('http://35.169.246.52/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username, email, password, confirmPassword
+                })
+            }) 
+            if (response.ok) {
+                return router.push('/')
+            } else {
+                const data = await response.json();
+                console.log({ error: data.message })
+            }
+        } catch (err) {
+            console.log({err})
+        }
     };
 
     return (
@@ -59,7 +76,7 @@ const SignUpPage = () => {
                     >
                         <div className="text-center mb-5">
                             <div className="text-700 text-3xl font-medium mb-3">
-                                ¡Compra y vende cerca ti!
+                                ¡Compra y vende cerca de ti!
                             </div>
                         </div>
 
@@ -93,13 +110,13 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD */}
-                            <FormField
+                            <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
-                                type="password"
                                 placeholder="Contraseña"
                                 register={register}
                                 errorMessage={errors.password?.message || ""}
+                                toggleMask
                                 rules={{
                                     required: "Contraseña requerida",
                                     minLength: {
@@ -111,15 +128,15 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD CONFIRMATION */}
-                            <FormField
+                            <PasswordField
                                 fieldId="confirmPassword"
                                 label="Repite la contraseña"
-                                type="password"
                                 placeholder="Repite la contraseña"
                                 register={register}
                                 errorMessage={
                                     errors.confirmPassword?.message || ""
                                 }
+                                toggleMask
                                 rules={{
                                     required:
                                         "Confirmación de Password requerida",
