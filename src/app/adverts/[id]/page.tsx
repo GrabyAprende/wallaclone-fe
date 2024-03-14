@@ -1,4 +1,3 @@
-import { Advert } from "@/types/general.types";
 import { FC } from "react";
 
 interface Props {
@@ -7,24 +6,12 @@ interface Props {
     }
 }
 
-// async function getData(props: Props) {
-//     const { params } = props;
-//     const res = await fetch(`http://35.169.246.52/api/advert/id/${id}`);
-
-//     if (!res.ok){
-//         console.log("error")
-//     }
-
-//     return res.json()
-// }
 
 
-// export default async function Page(props: Props) {
 
-//    // const advert = { name: "hola", price: "200"} as Advert
+const Page: FC<Props> = ({ params }) => {
 
-//     const advert = getData();
+    return <h1>Hola mundo este es mi id {params.id}</h1>
+}
 
-
-//     return <h1>Hola mundo este es mi id {advert.id}</h1>
-// }
+export default Page;

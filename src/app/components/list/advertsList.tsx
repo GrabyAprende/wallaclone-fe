@@ -1,12 +1,6 @@
-// import { Button } from 'primereact/button';
 import { Carousel } from 'primereact/carousel';
-// import React, { useEffect, useState } from 'react';
-// import { ProductService } from './ProductService';
-// import type { Demo } from '@/types';
 import Image from 'next/image';
-// import { link } from 'fs';
 import Link from 'next/link';
-// import { error } from 'console';
 
 async function getData() {
     const res = await fetch("http://35.169.246.52/api/adverts");
@@ -18,25 +12,9 @@ async function getData() {
     return res.json()
 }
 
-// async function getData() {
-//     try {
-//         const response = await axios("http://35.169.246.52/api/adverts")
-        
-//         return response.data as Advert[];
-
-//     } catch (err) {
-//         console.error({err})
-//         return []
-//     }
-// }
-
-// export const AdvertsListFetch = async () => {
 export default async function AdvertsListFetch(){
-    // const [products, setProducts] = useState<Demo.Product[]>([]);
 
     const products = await getData();
-
-    // useEffect(() => console.log({ data }), [data])
 
     const carouselResponsiveOptions = [
         {
@@ -56,11 +34,6 @@ export default async function AdvertsListFetch(){
         }
     ];
 
-    // useEffect(() => {
-    //     // TODO: CUANDO USEMOS EL BACKEND, BORRAR PRODUCTSERVICE 
-    //     ProductService.getProductsSmall().then((products) => setProducts(products));
-
-    // }, []);
 
     const carouselItemTemplate = (product: any) => {
         return (
