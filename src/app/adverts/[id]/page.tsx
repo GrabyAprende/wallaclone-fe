@@ -24,15 +24,6 @@ async function getData(id: string) {
     return res.json();
 }
 
-const productDetails = {
-    name: "Sample Product",
-    price: "200",
-    description: "Product description",
-    image: "images/screen6.jpeg",
-    seller: "Dulce",
-    tags: ["Smartphones", "New"],
-};
-
 const Tags = ({ tags }: { tags: Advert["tags"] }) =>
     tags.map((tag, index) => (
         <Tag key={index} value={tag} className="p-element">
@@ -48,36 +39,38 @@ export default async function Page({ params: { id } }: Props) {
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
             <div className="shadow-2 p-3 h-full flex flex-column surface-card lg:w-7">
-                <div>
-                    <Avatar
-                        size="large"
-                        shape="circle"
-                        className="p-element mb-3"
-                    >
-                        <div
-                            data-pc-name="avatar"
-                            className="p-avatar p-component p-avatar-circle p-avatar-l"
+                <div className="flex justify-content-between align-items-center mb-3">
+                    <div className="flex justify-content-between align-items-center">
+                        <Avatar
+                            size="large"
+                            shape="circle"
+                            className="p-element"
                         >
-                            <span className="p-avatar-text ng-star-inserted">
-                                U
-                            </span>
-                        </div>
-                    </Avatar>
-                    <span className="px-3">Dulce</span>
+                            <div
+                                data-pc-name="avatar"
+                                className="p-avatar p-component p-avatar-circle p-avatar-l"
+                            >
+                                <span className="p-avatar-text ng-star-inserted">
+                                    U
+                                </span>
+                            </div>
+                        </Avatar>
+                        <span className="px-3">Dulce</span>
+                    </div>
+                    <Button
+                        icon="pi pi-heart"
+                        className="p-element p-ripple p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                    >
+                        <span
+                            className="p-ink"
+                            aria-hidden="true"
+                            role="presentation"
+                        ></span>
+                    </Button>
                 </div>
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
                 <div className="relative mb-3">
-                    <span
-                        className="surface-card text-900 shadow-2 px-3 py-2 absolute"
-                        style={{
-                            borderRadius: "1.5rem",
-                            left: "1rem",
-                            top: "1rem",
-                        }}
-                    >
-                        Category
-                    </span>
                     <img
                         src={product.image}
                         alt="product image"
