@@ -7,7 +7,8 @@ import { classNames } from "primereact/utils";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import { Avatar } from "primereact/avatar";
-//import Image from "next/image";
+import { NextPage } from "next";
+import Image from "next/image";
 
 interface Props {
     params: {
@@ -27,21 +28,22 @@ const productDetails = {
     name: "Sample Product",
     price: "200",
     description: "Product description",
-    image: "screen6.jpeg",
+    image: "images/screen6.jpeg",
     seller: "Dulce",
     tags: ["Smartphones", "New"],
 };
 
-const tags = productDetails.tags.map((tag, index) => (
-    <Tag key={index} value={tag} className="p-element">
-        <span className="p-tag p-component p-tag-rounded">
-            <span className="p-tag-value"></span>
-        </span>
-    </Tag>
-));
+const Tags = ({ tags }: { tags: Advert["tags"] }) =>
+    tags.map((tag, index) => (
+        <Tag key={index} value={tag} className="p-element">
+            <span className="p-tag p-component p-tag-rounded">
+                <span className="p-tag-value"></span>
+            </span>
+        </Tag>
+    ));
 
-const AdvertDetail: FC<Props> = ({ params }) => {
-    const [product, setProduct] = useState<Advert | null>(null);
+export default async function Page({ params: { id } }: Props) {
+    const product = (await getData(id)) as Advert;
 
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
@@ -61,8 +63,7 @@ const AdvertDetail: FC<Props> = ({ params }) => {
                             </span>
                         </div>
                     </Avatar>
-                    <span className="px-3">{productDetails.seller}</span>
-                    <span>{params.id}</span>
+                    <span className="px-3">Dulce</span>
                 </div>
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
@@ -78,25 +79,26 @@ const AdvertDetail: FC<Props> = ({ params }) => {
                         Category
                     </span>
                     <img
-                        src="/images/screen6.jpeg"
+                        src={product.image}
                         alt="product image"
                         className="w-full"
                     />
                     {/* <Image
-                        fill
-                        src={`/images/${productDetails.image}`}
+                        width={600}
+                        height={400}
+                        src={"images/screen6.jpeg"}
                         className="w-full"
                         alt="Product Image"
                     /> */}
                 </div>
                 <div className="flex align-items-center">
                     <span className="font-bold text-2xl text-900">
-                        {productDetails.price} €
+                        {product.price} €
                     </span>
                 </div>
                 <div className="flex justify-content-between align-items-center mb-3">
                     <span className="text-900 font-medium text-xl">
-                        {productDetails.name}
+                        {product.name}
                     </span>
                     <span>
                         <i className="pi pi-star-fill text-yellow-500 mr-1"></i>
@@ -104,18 +106,20 @@ const AdvertDetail: FC<Props> = ({ params }) => {
                     </span>
                 </div>
                 <p className="mt-0 mb-3 text-600 line-height-3">
-                    {productDetails.description}
+                    {product.description}
                 </p>
-                <div className="flex flex-wrap gap-2">{tags}</div>
+                <div className="flex flex-wrap gap-2">
+                    <Tags tags={product.tags} />
+                </div>
                 <hr className="my-3 mx-0 border-top-1 border-none surface-border" />
                 <ul className="list-none p-0 m-0 flex-grow-1">
                     <li className="flex align-items-center mb-3">
                         <i className="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span>En punto de recogidadesde 2.59 EUR</span>
+                        <span>En punto de recogida desde 2.59 EUR</span>
                     </li>
                     <li className="flex align-items-center mb-3">
                         <i className="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span>En mi direccióndesde 3.49 EUR</span>
+                        <span>En mi dirección desde 3.49 EUR</span>
                     </li>
                 </ul>
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
@@ -127,6 +131,4 @@ const AdvertDetail: FC<Props> = ({ params }) => {
             </div>
         </div>
     );
-};
-
-export default AdvertDetail;
+}
