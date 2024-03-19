@@ -1,5 +1,3 @@
-"use client";
-
 import { Advert } from "@/types/general.types";
 import { FC } from "react";
 import React, { useEffect, useState } from "react";
@@ -9,6 +7,7 @@ import { Tag } from "primereact/tag";
 import { Avatar } from "primereact/avatar";
 import { NextPage } from "next";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 interface Props {
     params: {
@@ -17,11 +16,16 @@ interface Props {
 }
 
 async function getData(id: string) {
-    const res = await fetch(`http://35.169.246.52/api/advert/id/${id}`);
-    if (!res.ok) {
-        console.log(Error);
+    try {
+        const res = await fetch(`http://35.169.246.52/api/advert/id/${id}`);
+        if (!res.ok) {
+            const data = await res.json();
+            console.log({ error: data.message })
+        }
+        return res.json();
+    } catch (err) {
+        console.error({ err })
     }
-    return res.json();
 }
 
 const productDetails = {
@@ -44,6 +48,8 @@ const Tags = ({ tags }: { tags: Advert["tags"] }) =>
 
 export default async function Page({ params: { id } }: Props) {
     const product = (await getData(id)) as Advert;
+
+    if (!product) redirect('/');
 
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">

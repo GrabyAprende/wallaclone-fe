@@ -1,12 +1,11 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 
 import { StyleClass } from "primereact/styleclass";
 import { Button } from "primereact/button";
 import { Ripple } from "primereact/ripple";
-import { Divider } from "primereact/divider";
 import { LayoutContext } from "../layout/context/layoutcontext";
 import { NodeRef } from "@/types";
 import { classNames } from "primereact/utils";
@@ -14,11 +13,24 @@ import { InputText } from "primereact/inputtext";
 import { Logo } from "./components/form/logo";
 import Image from "next/image";
 import AdvertsList from "./components/list/advertsList";
+import { getCookie } from 'cookies-next';
+import { redirect } from 'next/navigation'
 
 const HomePage = () => {
     const [isHidden, setIsHidden] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
     const menuRef = useRef<HTMLElement | null>(null);
+    
+    // Al cargar el componente, verificamos que haya sesion, si no hay
+    // redireccionamos a /login (Esto deberia estar en un hook y no deberia ir aqui, sino
+    // las paginas protegidas)
+    useEffect(() => {
+        const session = getCookie("session")
+        
+        console.log({ session })
+    
+        if (!session) redirect("/login")
+    }, [])
 
     const toggleMenuItemClick = () => {
         setIsHidden(prevState => !prevState);

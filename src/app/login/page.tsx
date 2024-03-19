@@ -1,65 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
-'use client';
-import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
-import { Checkbox } from 'primereact/checkbox'; //primereact: libreria de react
+import { redirect } from 'next/navigation';
 import { Button } from 'primereact/button';
-import { Password } from 'primereact/password';
-import { LayoutContext } from '../../layout/context/layoutcontext';
-import { InputText } from 'primereact/inputtext';
-import { classNames } from 'primereact/utils';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { FormField } from '../components/form/formField';
 import Link from 'next/link';
-import { PasswordField } from '../components/form/passwordField';
-//import { Logo } from './atoms/Logo/logo';
+import { getSession, login } from '../../../lib';
+import { InputText } from 'primereact/inputtext';
+import { Password } from 'primereact/password';
 
-//los tipos de los inputs del formulario
-type Inputs = {
-    username: string;
-    password: string;
-};
+// TO DO
+// - VER COMO MANEJAR LOS ERRORES (LIBRERIA ZOD, ECHAR UN VISTAZO)
+// - OBTENER EL USUSARIO REAL
+// - CAMBIAR 10 SEGUNDOS A UNA HORA Y REDIRECCIONES CORRECTAS (/register cuando no haya sesion y quitarla de la page principal)
+// - CREAR EL HOOK DE AUTORIZACION
+// - HACER UNA LÓGICA SIMILAR EN REGISTRO POR CONSISTENCIA (NO PRIORITARIO PORQUE ALLI FUNCIONA!!!!!!!!)
 
-const LoginPage = () => {
-    const [checked, setChecked] = useState(false); //almacenamiento del estado checkbox
-    const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
 
-    const router = useRouter(); // accedemos al obj router para la navegación
-    const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
-    //classNames: función que proporciona la librería de PrimeReact, genera CSS según argumentos
+export default async function LoginPage() {
+    const session = await getSession();
 
-    // useForm nos ayuda a manejar los formularios
-    const {
-        register, // registra los imputs
-        handleSubmit, // maneja los datos del formulario al hacer submit
-        formState: { errors } // manejador de errores ej: errors.email.message tiene el mensaje de error
-    } = useForm<Inputs>();
-
-    const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        const { username, password } = data
-        
-        try {
-            const response = await fetch('http://35.169.246.52/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username, password
-                })
-            })
-            if (response.ok) {
-                return router.push('/')
-            } else {
-                const data = await response.json();
-                console.log({ error: data.message })
-            }
-            
-        } catch (err) {
-            console.log(err)
-        }
-    };
+    if(session) redirect("/");
 
     return (
-        <div className={containerClassName}>
+        <div className={'surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden p-input-filled'}>
             <div className="flex flex-column align-items-center justify-content-center">
                 <div
                     style={{
@@ -73,40 +34,49 @@ const LoginPage = () => {
                             <div className="text-900 text-3xl font-medium mb-3">¡Te damos la bienvenida!</div>
                         </div>
 
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                        {/* <form onSubmit={handleSubmit(onSubmit)}> */}
+                        <form action={
+                            // Esta funcion se ejecutara cuando clickemos en el boton submit dentro del formulario
+                            async (formData) => { // formData serán todos los inputs que tengan el atributo name
+                                "use server"
+                                // formData.username y formData.password porque son los names de sus inputs
+                                await login(formData);
+                            }
+                        }>
                             {/* INPUT EMAIL */}
-                            <FormField
-                                fieldId="username"
-                                label="Usuario"
-                                type="text"
-                                placeholder='Tu nombre de usuario'
-                                register={register}
-                                errorMessage={errors.username?.message || ""}
-                                rules={{ required: "Nombre de usuario requerido" }}
-                            />
-                        
-                            {/* PASSWORD */}
-                            <PasswordField
-                                fieldId="password"
-                                label="Contraseña"
-                                placeholder='Contraseña'
-                                register={register}
-                                errorMessage={errors.password?.message || ""}
-                                toggleMask
-                                rules={{ required: "Contraseña requerida",
-                                minLength: { value: 8, message: "Mínimo 8 caracteres"},
-                            }}
-                            />
-                            {/* RECORDAR CONTRASEÑA */}
-                            <div className="flex align-items-center justify-content-between mb-5 gap-5">
-                                <div className="flex align-items-center">
-                                    <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
-                                    <label htmlFor="rememberme1">Recordar</label>
-                                </div>
+                            <div className="mb-5">
+                                <label
+                                    htmlFor={"username"}
+                                    className="block text-900 text-xl font-medium mb-2"
+                                >
+                                    {"Usuario"}
+                                </label>
+                                <InputText
+                                    id={"username"}
+                                    name={"username"}
+                                    placeholder={"Escribe tu usuario"}
+                                    className={"w-full md:w-30rem p-3"}
+                                />
+                            </div>
+                            <div className="mb-5">
+                                <label
+                                    htmlFor={"username"}
+                                    className="block text-900 text-xl font-medium mb-2"
+                                >
+                                    {"Contraseña"}
+                                </label>
+                                <Password
+                                    inputId={"password"}
+                                    name="password"
+                                    placeholder={"Escribe tu contraseña"}
+                                    inputClassName={"w-full md:w-30rem p-3"}
+                                    feedback={false}
+                                    toggleMask
+                                />
+                            </div>
                                 <a className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
                                     ¿Has olvidado tu contraseña?
                                 </a>
-                            </div>
                             
                             {/* BOTON PARA ACCEDER */}
                             <Button label="Acceder a Wallaclone" className="w-full p-3 text-xl" type='submit'></Button>
@@ -120,7 +90,4 @@ const LoginPage = () => {
             </div>
         </div>
     );
-
 };
-
-export default LoginPage;
