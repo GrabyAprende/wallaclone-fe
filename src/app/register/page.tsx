@@ -10,7 +10,6 @@ import isStrongPassword from "validator/lib/isStrongPassword";
 import Link from "next/link";
 import { PasswordField } from "../components/form/passwordField";
 
-
 type Inputs = {
     username: string;
     email: string;
@@ -37,25 +36,28 @@ const SignUpPage = () => {
 
     const password = watch("password"); //para asegurarme que las passwords sean las mismas
 
-    const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        const { username, email, password, confirmPassword } = data 
+    const onSubmit: SubmitHandler<Inputs> = async data => {
+        const { username, email, password, confirmPassword } = data;
 
         try {
-            const response = await fetch('http://35.169.246.52/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("http://35.169.246.52/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    username, email, password, confirmPassword
-                })
-            }) 
+                    username,
+                    email,
+                    password,
+                    confirmPassword,
+                }),
+            });
             if (response.ok) {
-                return router.push('/')
+                return router.push("/");
             } else {
                 const data = await response.json();
-                console.log({ error: data.message })
+                console.log({ error: data.message });
             }
         } catch (err) {
-            console.log({err})
+            console.log({ err });
         }
     };
 
@@ -123,7 +125,14 @@ const SignUpPage = () => {
                                         value: 8,
                                         message: "Mínimo 8 caracteres",
                                     },
-                                    validate: value => isStrongPassword(value, {minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1}) || "La contraseña debe tener mayúscula, número, símbolos y minúscula"
+                                    validate: value =>
+                                        isStrongPassword(value, {
+                                            minLowercase: 1,
+                                            minUppercase: 1,
+                                            minNumbers: 1,
+                                            minSymbols: 1,
+                                        }) ||
+                                        "La contraseña debe tener mayúscula, número, símbolos y minúscula",
                                 }}
                             />
 
@@ -153,8 +162,15 @@ const SignUpPage = () => {
                                 type="submit"
                             ></Button>
                             <div className="flex justify-content-center mt-4">
-                                <span className="font-extralight text-2xl text-black-500 mr-2">¿Ya tienes una cuenta?</span> 
-                                <Link href="/login" className="text-2xl cursor-pointer">Inicia sesión</Link>        
+                                <span className="font-extralight text-2xl text-black-500 mr-2">
+                                    ¿Ya tienes una cuenta?
+                                </span>
+                                <Link
+                                    href="/login"
+                                    className="text-2xl cursor-pointer"
+                                >
+                                    Inicia sesión
+                                </Link>
                             </div>
                         </form>
                     </div>
