@@ -1,15 +1,13 @@
-"use client";
+'use client';
 
-import { Advert } from "@/types/general.types";
+import { Advert } from '@/types/general.types';
 //import { FC, useReducer } from "react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 //import { classNames } from "primereact/utils";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { Avatar } from "primereact/avatar";
-//import { NextPage } from "next";
-//import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { Button } from 'primereact/button';
+import { Tag } from 'primereact/tag';
+import { Avatar } from 'primereact/avatar';
+import { useRouter } from 'next/navigation';
 
 interface Props {
     params: {
@@ -25,7 +23,7 @@ async function getData(id: string) {
     return res.json();
 }
 
-const Tags = ({ tags }: { tags: Advert["tags"] }) =>
+const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     tags.map((tag, index) => (
         <Tag key={index} value={tag} className="p-element">
             <span className="p-tag p-component p-tag-rounded">
@@ -38,9 +36,10 @@ export default async function Page({ params: { id } }: Props) {
     const router = useRouter();
     const product = (await getData(id)) as Advert;
 
-    const handleHeartButtonClick = () => {
-        console.log("Btn cliick!");
-        router.push("http://35.169.246.52/api/register");
+    const handleHeartButtonClick = (e: any) => {
+        e.preventDefault();
+        console.log('Btn cliick!');
+        router.push('/register');
     };
 
     return (
