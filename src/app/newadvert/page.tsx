@@ -1,58 +1,71 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "primereact/button";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import { Button } from 'primereact/button';
+import { useRouter } from 'next/navigation';
+import { MultiSelect } from 'primereact/multiselect';
 
 export default function NewAdvertPage() {
     const router = useRouter();
+    //Tags provisionales para probar:
+    // const staticTags = [
+    //     { label: 'Motor', value: 'motor' },
+    //     { label: 'Lifestyle', value: 'lifestyle' },
+    //     { label: 'Technology', value: 'technology' },
+    // ];
+    const [tags, setTags] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
 
     //Creo el estado inicial del anuncio nuevo
     const [advertData, setAdvertData] = useState({
-        name: "",
-        description: "",
+        name: '',
+        description: '',
         price: 0,
-        image: "",
+        image: '',
         tags: [],
         status: true,
     });
+
+    //Llamo las tags
+    useEffect(() => {
+        fetchTags();
+    }, []);
+
+    const fetchTags = async () => {
+        try {
+            const response = await fetch('http://35.169.246.52/api/tags');
+            if (response.ok) {
+                const { tags } = await response.json();
+                setTags(tags.map((tag: any) => ({ label: tag, value: tag })));
+            } else {
+                console.error('Failed to fetch tags');
+            }
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        }
+    };
 
     //Actualizo los cambios
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        setAdvertData(prevState => ({
+        setAdvertData((prevState) => ({
             ...prevState,
             [name]: value,
         }));
     };
 
-    //Manejo la subida de imágen y convierto la url a string
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]; // Me aseguro de que se tome solo el primer archivo
-        if (file) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                setAdvertData(prevState => ({
-                    ...prevState,
-                    image: reader.result as string, // Guardo como string
-                }));
-            };
-        }
-    };
-
     //Manejo el envío del form
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         try {
             const response = await fetch(
-                "http://35.169.246.52/api/advert/new",
+                'http://35.169.246.52/api/advert/new',
                 {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(advertData),
                 }
@@ -60,19 +73,19 @@ export default function NewAdvertPage() {
             if (response.ok) {
                 const newAdvert = await response.json();
                 //Mejor redireccionar al detalle?
-                router.push(`http://35.169.246.52/api/adverts`);
+                router.push(`/adverts`);
             } else {
-                console.error("Failed to create advert");
+                console.error('Failed to create advert');
             }
         } catch (error) {
-            console.error("Error creating advert:", error);
+            console.error('Error creating advert:', error);
         }
     };
 
     return (
         <div
             style={{
-                flexDirection: "column",
+                flexDirection: 'column',
             }}
             className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted"
         >
@@ -80,7 +93,7 @@ export default function NewAdvertPage() {
             <div
                 className="px-3 py-4 w-full h-full flex flex-column surface-card lg:w-7"
                 style={{
-                    borderRadius: "20px",
+                    borderRadius: '20px',
                 }}
             >
                 <h5>Información del producto</h5>
@@ -146,9 +159,10 @@ export default function NewAdvertPage() {
                                 type="file"
                                 id="image"
                                 name="image"
-                                onChange={handleImageChange}
+                                onChange={handleChange}
                             />
                         </div>
+
                         <div className="p-field mb-3">
                             <label
                                 className="block font-medium mb-2"
@@ -156,19 +170,18 @@ export default function NewAdvertPage() {
                             >
                                 Tags
                             </label>
-                            <input
-                                className="p-inputtext p-component p-element w-full"
-                                type="text"
+                            <MultiSelect
                                 id="tags"
                                 name="tags"
-                                value={
-                                    advertData.tags
-                                        ? advertData.tags.join(",")
-                                        : ""
-                                }
-                                onChange={handleChange}
+                                value={selectedTags}
+                                options={tags}
+                                onChange={(e) => setSelectedTags(e.value)}
+                                optionLabel="label"
+                                className="w-full"
+                                placeholder="Select Tags"
                             />
                         </div>
+
                         <Button label="Crear Anuncio" type="submit" />
                     </form>
                 </div>
