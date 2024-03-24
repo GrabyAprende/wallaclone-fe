@@ -1,18 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox'; //primereact: libreria de react
 import { Button } from 'primereact/button';
-import { Password } from 'primereact/password';
 import { LayoutContext } from '../../layout/context/layoutcontext';
-import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormField } from '../components/form/formField';
 import Link from 'next/link';
 import { PasswordField } from '../components/form/passwordField';
-//import { Logo } from './atoms/Logo/logo';
+import { SessionContext } from '@/context/sessionContext';
 
 //los tipos de los inputs del formulario
 type Inputs = {
@@ -21,38 +19,50 @@ type Inputs = {
 };
 
 const LoginPage = () => {
+    const { isLogged, handleNewToken } = useContext(SessionContext);
+    const router = useRouter(); // accedemos al obj router para la navegación
+
+    useEffect(() => {
+        if (isLogged) router.push("/")
+    }, [isLogged, router]);
+
+
     const [checked, setChecked] = useState(false); //almacenamiento del estado checkbox
     const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
 
-    const router = useRouter(); // accedemos al obj router para la navegación
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
-    //classNames: función que proporciona la librería de PrimeReact, genera CSS según argumentos
 
-    // useForm nos ayuda a manejar los formularios
     const {
         register, // registra los imputs
         handleSubmit, // maneja los datos del formulario al hacer submit
-        formState: { errors } // manejador de errores ej: errors.email.message tiene el mensaje de error
+        formState: { errors } 
     } = useForm<Inputs>();
 
-    const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        const { username, password } = data
+
+    const onSubmit: SubmitHandler<Inputs> = async (formData) => {
+        const { username, password } = formData
         
         try {
-            const response = await fetch('http://35.169.246.52/api/login', {
+            const loginResponse = await fetch('http://35.169.246.52/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     username, password
                 })
             })
-            if (response.ok) {
+
+            if (loginResponse.ok) {
+                const { token } = await loginResponse.json(); //desestructuramos el token
+
+                handleNewToken(token);
+
                 return router.push('/')
+
             } else {
-                const data = await response.json();
-                console.log({ error: data.message })
-            }
+                const errorLoginData = await loginResponse.json();
+                console.log({ error: errorLoginData });
             
+            }
         } catch (err) {
             console.log(err)
         }

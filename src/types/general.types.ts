@@ -7,3 +7,12 @@ export interface Advert {
     tags:string[];
     _id: string;
 }
+
+export interface UserDetails {
+    adverts: Advert[];
+    user: {
+        email: string;
+        username: string;
+        _id: string;
+    }
+}
