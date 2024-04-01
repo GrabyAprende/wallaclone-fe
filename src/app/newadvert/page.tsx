@@ -1,13 +1,20 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from 'primereact/multiselect';
-import { Advert } from '@/types/general.types';
+import { Advert, UserDetails } from '@/types/general.types';
+import { SessionContext } from '@/context/sessionContext';
 
 export default function NewAdvertPage() {
+    const { isLogged, token } = useContext(SessionContext);
     const router = useRouter();
+
+    useEffect(() => {
+        if (!isLogged) router.push('/register')
+    }, [isLogged, router]);
+    
     //Tags provisionales para probar:
     // const staticTags = [
     //     { label: 'Motor', value: 'motor' },
@@ -29,7 +36,12 @@ export default function NewAdvertPage() {
 
     const fetchTags = async () => {
         try {
-            const response = await fetch('http://35.169.246.52/api/tags');
+            const response = await fetch('http://35.169.246.52/api/tags', {
+                method: 'GET',  
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+            });
             if (response.ok) {
                 const { tags } = await response.json();
                 setTags(tags.map((tag: any) => ({ label: tag, value: tag })));
@@ -40,7 +52,7 @@ export default function NewAdvertPage() {
             console.error('Error fetching tags:', error);
         }
     };
-    
+
     //Llamo las tags
     useEffect(() => {
         fetchTags();
@@ -66,7 +78,8 @@ export default function NewAdvertPage() {
                 {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(advertData),
                 }

@@ -1,8 +1,13 @@
+import { SessionContext } from "@/context/sessionContext";
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "primereact/button"
+import { useContext } from "react";
 
 export const Hero = () => {
+
+    const { isLogged, token } = useContext(SessionContext);
+
     return (
         <div
             id="hero"
@@ -23,14 +28,32 @@ export const Hero = () => {
                 <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">
                     y Descubre Ofertas Únicas en Artículos Nuevos y Usados
                 </p>
-                <Link href={{ pathname: "/register" }}>
-                    <Button
-                        type="button"
-                        label="¿Crear anuncio?"
-                        rounded
-                        className="text-xl border-none mt-3 bg-violet-500 font-normal line-height-3 px-3 text-white"
-                    ></Button>
-                </Link>
+                <div className="flex justify-content-end py-3 md:flex-column">
+                    {isLogged ? (
+                        <div className="flex justify-content-start align-items-start flex-column">
+                            <Link href={{ pathname: "/newadvert" }} className="flex justify-content-center">
+                                    <Button
+                                        label="¿Crear anuncio?"
+                                        rounded
+                                        className="text-xl border-none mt-3 bg-violet-500 font-normal line-height-3 px-3 text-white"
+                                    ></Button>
+                                </Link>
+                        </div>
+                    ) :
+                        (
+                            <>
+                                
+                                <Link href={{ pathname: "/register" }} className="flex justify-content-center">
+                                    <Button
+                                        label="Regístrate"
+                                        rounded
+                                        className="border-none ml-5 font-light line-height-2 bg-violet-500 text-white md:ml-0"
+                                    ></Button>
+                                </Link>
+                            </>
+                        )}
+                </div>
+            
             </div>
             <div className="flex justify-content-center md:justify-content-end mt-3">
                 <Image

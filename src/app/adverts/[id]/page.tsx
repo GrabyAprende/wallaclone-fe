@@ -1,13 +1,13 @@
-'use client';
+
 
 import { Advert } from '@/types/general.types';
 //import { FC, useReducer } from "react";
-import React, { useEffect, useState } from 'react';
 //import { classNames } from "primereact/utils";
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
+import Image from 'next/image';
 
 interface Props {
     params: {
@@ -33,13 +33,13 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     ));
 
 export default async function Page({ params: { id } }: Props) {
-    const router = useRouter();
+   
     const product = (await getData(id)) as Advert;
 
     const handleHeartButtonClick = (e: any) => {
         e.preventDefault();
-        console.log('Btn cliick!');
-        router.push('/register');
+        
+       redirect('/register');
     };
 
     return (
@@ -73,7 +73,7 @@ export default async function Page({ params: { id } }: Props) {
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
                 <div className="relative mb-3">
-                    <img
+                    <Image
                         src={product.image}
                         alt="product image"
                         className="w-full"
