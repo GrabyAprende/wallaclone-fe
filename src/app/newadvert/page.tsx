@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from 'primereact/multiselect';
+import { Advert } from '@/types/general.types';
 
 export default function NewAdvertPage() {
     const router = useRouter();
@@ -26,11 +27,6 @@ export default function NewAdvertPage() {
         status: true,
     });
 
-    //Llamo las tags
-    useEffect(() => {
-        fetchTags();
-    }, []);
-
     const fetchTags = async () => {
         try {
             const response = await fetch('http://35.169.246.52/api/tags');
@@ -44,6 +40,11 @@ export default function NewAdvertPage() {
             console.error('Error fetching tags:', error);
         }
     };
+    
+    //Llamo las tags
+    useEffect(() => {
+        fetchTags();
+    }, []);
 
     //Actualizo los cambios
     const handleChange = (
@@ -71,9 +72,9 @@ export default function NewAdvertPage() {
                 }
             );
             if (response.ok) {
-                const newAdvert = await response.json();
+                const newAdvert: Advert = await response.json();
                 //Mejor redireccionar al detalle?
-                router.push(`/adverts`);
+                router.push(`/adverts/${newAdvert._id}`);
             } else {
                 console.error('Failed to create advert');
             }
