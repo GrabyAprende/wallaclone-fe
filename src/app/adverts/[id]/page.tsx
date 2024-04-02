@@ -1,5 +1,4 @@
-
-
+'use client';
 import { Advert } from '@/types/general.types';
 //import { FC, useReducer } from "react";
 //import { classNames } from "primereact/utils";
@@ -8,6 +7,9 @@ import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
+
+import { useContext } from 'react';
+import { SessionContext } from '@/context/sessionContext';
 
 interface Props {
     params: {
@@ -33,13 +35,13 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     ));
 
 export default async function Page({ params: { id } }: Props) {
-   
+    const { isLogged, userDetails } = useContext(SessionContext); //accedemos al estado global de la app
     const product = (await getData(id)) as Advert;
 
     const handleHeartButtonClick = (e: any) => {
         e.preventDefault();
-        
-       redirect('/register');
+
+        redirect('/register');
     };
 
     return (
@@ -58,33 +60,49 @@ export default async function Page({ params: { id } }: Props) {
                         </Avatar>
                         <span className="px-3">Dulce</span>
                     </div>
-                    <Button
-                        onClick={handleHeartButtonClick}
-                        icon="pi pi-heart"
-                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                    >
-                        <span
-                            className="p-ink"
-                            aria-hidden="true"
-                            role="presentation"
-                        ></span>
-                    </Button>
+                    <div className="flex justify-content-between align-items-center gap-2">
+                        {isLogged ? (
+                            <div className="flex justify-content-between align-items-center gap-2">
+                                <Button
+                                    //onClick={handleHeartButtonClick}
+                                    icon="pi pi-heart"
+                                    // className="p-button p-component p-button-icon-only p-button-rounded p-button-help"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                                />
+                                <Button
+                                    icon="pi pi-pencil"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                    //onClick={handleEditarClick}
+                                />
+                                <Button
+                                    icon="pi pi-trash"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
+                                    //onClick={handleEliminarClick}
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <Button
+                                    //onClick={handleHeartButtonClick}
+                                    icon="pi pi-heart"
+                                    // className="p-button p-component p-button-icon-only p-button-rounded p-button-help"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
                 <div className="relative mb-3">
                     <Image
                         src={product.image}
+                        width={600}
+                        height={500}
                         alt="product image"
                         className="w-full"
+                        style={{ objectFit: 'cover' }}
                     />
-                    {/* <Image
-                        width={600}
-                        height={400}
-                        src={"images/screen6.jpeg"}
-                        className="w-full"
-                        alt="Product Image"
-                    /> */}
                 </div>
                 <div className="flex align-items-center">
                     <span className="font-bold text-2xl text-900">

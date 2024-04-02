@@ -12,9 +12,9 @@ export default function NewAdvertPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLogged) router.push('/register')
+        if (!isLogged) router.push('/register');
     }, [isLogged, router]);
-    
+
     //Tags provisionales para probar:
     // const staticTags = [
     //     { label: 'Motor', value: 'motor' },
@@ -37,9 +37,9 @@ export default function NewAdvertPage() {
     const fetchTags = async () => {
         try {
             const response = await fetch('http://35.169.246.52/api/tags', {
-                method: 'GET',  
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
             });
             if (response.ok) {
@@ -78,8 +78,8 @@ export default function NewAdvertPage() {
                 {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(advertData),
                 }
