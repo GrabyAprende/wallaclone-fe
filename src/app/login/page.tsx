@@ -23,48 +23,51 @@ const LoginPage = () => {
     const router = useRouter(); // accedemos al obj router para la navegación
 
     useEffect(() => {
-        if (isLogged) router.push("/")
+        if (isLogged) router.push('/');
     }, [isLogged, router]);
-
 
     const [checked, setChecked] = useState(false); //almacenamiento del estado checkbox
     const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
 
-    const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
+    const containerClassName = classNames(
+        'surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden',
+        { 'p-input-filled': layoutConfig.inputStyle === 'filled' }
+    );
 
     const {
         register, // registra los imputs
         handleSubmit, // maneja los datos del formulario al hacer submit
-        formState: { errors } 
+        formState: { errors },
     } = useForm<Inputs>();
 
-
     const onSubmit: SubmitHandler<Inputs> = async (formData) => {
-        const { username, password } = formData
-        
+        const { username, password } = formData;
+
         try {
-            const loginResponse = await fetch('http://35.169.246.52/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username, password
-                })
-            })
+            const loginResponse = await fetch(
+                'https://coderstrikeback.es/api/login',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                    }),
+                }
+            );
 
             if (loginResponse.ok) {
                 const { token } = await loginResponse.json(); //desestructuramos el token
 
                 handleNewToken(token);
 
-                return router.push('/')
-
+                return router.push('/');
             } else {
                 const errorLoginData = await loginResponse.json();
                 console.log({ error: errorLoginData });
-            
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     };
 
@@ -75,12 +78,18 @@ const LoginPage = () => {
                     style={{
                         borderRadius: '56px',
                         padding: '0.3rem',
-                        background: 'linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)'
+                        background:
+                            'linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)',
                     }}
                 >
-                    <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
+                    <div
+                        className="w-full surface-card py-8 px-5 sm:px-8"
+                        style={{ borderRadius: '53px' }}
+                    >
                         <div className="text-center mb-5">
-                            <div className="text-900 text-3xl font-medium mb-3">¡Te damos la bienvenida!</div>
+                            <div className="text-900 text-3xl font-medium mb-3">
+                                ¡Te damos la bienvenida!
+                            </div>
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -89,40 +98,69 @@ const LoginPage = () => {
                                 fieldId="username"
                                 label="Usuario"
                                 type="text"
-                                placeholder='Tu nombre de usuario'
+                                placeholder="Tu nombre de usuario"
                                 register={register}
-                                errorMessage={errors.username?.message || ""}
-                                rules={{ required: "Nombre de usuario requerido" }}
+                                errorMessage={errors.username?.message || ''}
+                                rules={{
+                                    required: 'Nombre de usuario requerido',
+                                }}
                             />
-                        
+
                             {/* PASSWORD */}
                             <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
-                                placeholder='Contraseña'
+                                placeholder="Contraseña"
                                 register={register}
-                                errorMessage={errors.password?.message || ""}
+                                errorMessage={errors.password?.message || ''}
                                 toggleMask
-                                rules={{ required: "Contraseña requerida",
-                                minLength: { value: 8, message: "Mínimo 8 caracteres"},
-                            }}
+                                rules={{
+                                    required: 'Contraseña requerida',
+                                    minLength: {
+                                        value: 8,
+                                        message: 'Mínimo 8 caracteres',
+                                    },
+                                }}
                             />
                             {/* RECORDAR CONTRASEÑA */}
                             <div className="flex align-items-center justify-content-between mb-5 gap-5">
                                 <div className="flex align-items-center">
-                                    <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
-                                    <label htmlFor="rememberme1">Recordar</label>
+                                    <Checkbox
+                                        inputId="rememberme1"
+                                        checked={checked}
+                                        onChange={(e) =>
+                                            setChecked(e.checked ?? false)
+                                        }
+                                        className="mr-2"
+                                    ></Checkbox>
+                                    <label htmlFor="rememberme1">
+                                        Recordar
+                                    </label>
                                 </div>
-                                <a className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
+                                <a
+                                    className="font-medium no-underline ml-2 text-right cursor-pointer"
+                                    style={{ color: 'var(--primary-color)' }}
+                                >
                                     ¿Has olvidado tu contraseña?
                                 </a>
                             </div>
-                            
+
                             {/* BOTON PARA ACCEDER */}
-                            <Button label="Acceder a Wallaclone" className="w-full p-3 text-xl" type='submit'></Button>
+                            <Button
+                                label="Acceder a Wallaclone"
+                                className="w-full p-3 text-xl"
+                                type="submit"
+                            ></Button>
                             <div className="flex justify-content-center mt-4">
-                                <span className="font-extralight text-1xl text-black-500 mr-2">¿Aún no eres miembro?</span> 
-                                <Link href="/register" className="text-1xl cursor-pointer">Regístrate</Link>        
+                                <span className="font-extralight text-1xl text-black-500 mr-2">
+                                    ¿Aún no eres miembro?
+                                </span>
+                                <Link
+                                    href="/register"
+                                    className="text-1xl cursor-pointer"
+                                >
+                                    Regístrate
+                                </Link>
                             </div>
                         </form>
                     </div>
@@ -130,7 +168,6 @@ const LoginPage = () => {
             </div>
         </div>
     );
-
 };
 
 export default LoginPage;

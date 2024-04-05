@@ -36,12 +36,15 @@ export default function NewAdvertPage() {
 
     const fetchTags = async () => {
         try {
-            const response = await fetch('http://35.169.246.52/api/tags', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await fetch(
+                'https://coderstrikeback.es/api/tags',
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             if (response.ok) {
                 const { tags } = await response.json();
                 setTags(tags.map((tag: any) => ({ label: tag, value: tag })));
@@ -74,7 +77,7 @@ export default function NewAdvertPage() {
         e.preventDefault();
         try {
             const response = await fetch(
-                'http://35.169.246.52/api/advert/new',
+                'https://coderstrikeback.es/api/advert/new',
                 {
                     method: 'POST',
                     headers: {
