@@ -5,6 +5,7 @@ import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { useContext, useState, useEffect } from 'react';
 import { SessionContext } from '@/context/sessionContext';
@@ -175,11 +176,17 @@ export default async function Page({ params: { id } }: Props) {
                                     icon="pi pi-heart"
                                     className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
                                 />
-                                <Button
-                                    icon="pi pi-pencil"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
-                                    //onClick={handleEditAdvert}
-                                />
+
+                                <Link
+                                    href={{
+                                        pathname: `/editAdvert/${id}`,
+                                    }}
+                                >
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                    />
+                                </Link>
                                 <Button
                                     icon="pi pi-trash"
                                     className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
