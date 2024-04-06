@@ -1,13 +1,13 @@
 'use client';
-import { Advert, UserDetails } from '@/types/general.types';
+import { Advert } from '@/types/general.types';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { SessionContext } from '@/context/sessionContext';
 
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
@@ -26,6 +26,15 @@ async function getData(id: string) {
     return res.json();
 }
 
+async function getUserData(id: string) {
+    const res = await fetch(`https://coderstrikeback.es/api/get-user/${id}`);
+    if (!res.ok) {
+        console.log(Error);
+    }
+    console.log(res);
+    return res.json();
+}
+
 const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     tags.map((tag, index) => (
         <Tag key={index} value={tag} className="p-element">
@@ -35,14 +44,19 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
         </Tag>
     ));
 
-//Probando con ConfirmDialog
 export default async function Page({ params: { id } }: Props) {
     const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
     const router = useRouter();
 
     const product = (await getData(id)) as Advert;
 
-    const isOwner = userDetails?.user._id === product.owner; //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
+    //Obtengo username del creador del Anuncio
+    const userData = await getUserData(product.owner);
+    const owner = userData[0];
+    const usernameOwner = owner?.username;
+
+    //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
+    const isOwner = userDetails?.user._id === product.owner;
 
     //Redirige a home al hacer click en el heart Button
     const handleHeartButtonClick = (e: any) => {
@@ -107,15 +121,13 @@ export default async function Page({ params: { id } }: Props) {
                             shape="circle"
                             className="p-avatar p-element p-avatar-circle flex align-items-center justify-content-center"
                         >
-                            {userDetails?.user.username && (
+                            {usernameOwner && (
                                 <span className="p-component p-avatar-text ng-star-inserted p-avatar-l">
-                                    {userDetails.user.username.charAt(0)}
+                                    {usernameOwner.charAt(0)}
                                 </span>
                             )}
                         </Avatar>
-                        <span className="px-3">
-                            {userDetails?.user.username}
-                        </span>
+                        <span className="px-3">{usernameOwner}</span>
                     </div>
                     <div className="flex justify-content-between align-items-center gap-2">
                         {isLogged && isOwner ? (
