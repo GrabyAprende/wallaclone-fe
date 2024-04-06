@@ -96,7 +96,7 @@ export default function Page({ params: { id } }: Props) {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(newAdvertData),
+                    body: JSON.stringify({ newAdvertData, tags: selectedTags }),
                 }
             );
             if (response.ok) {

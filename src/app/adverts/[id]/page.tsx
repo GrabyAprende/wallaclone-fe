@@ -3,14 +3,14 @@ import { Advert, UserDetails } from '@/types/general.types';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { SessionContext } from '@/context/sessionContext';
 
-import { ConfirmDialog } from 'primereact/confirmdialog';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 interface Props {
     params: {
@@ -38,72 +38,21 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
 //Probando con ConfirmDialog
 export default async function Page({ params: { id } }: Props) {
     const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
-    const [visible, setVisible] = useState(false); //State para manejar el dialog/popup
-    //const [ownerName, setOwnerName] = useState('');
+    const router = useRouter();
 
     const product = (await getData(id)) as Advert;
 
-    //Obtengo el nombre del usuario creador del anuncio
-    // useEffect(() => {
-    //     async function fetchOwnerName() {
-    //         try {
-    //             const response = await fetch(
-    //                 'https://coderstrikeback.es/api/adverts-user',
-    //                 {
-    //                     method: 'GET',
-    //                     headers: {
-    //                         Authorization: `Bearer ${token}`,
-    //                     },
-    //                 }
-    //             );
-
-    //             if (!response.ok) {
-    //                 console.error(
-    //                     'Error fetching user details:',
-    //                     response.status
-    //                 );
-    //                 return;
-    //             }
-
-    //             const userDetails: UserDetails = await response.json();
-    //             const advert = userDetails.adverts.find(
-    //                 (advert) => advert._id === id
-    //             );
-
-    //             if (advert) {
-    //                 setOwnerName(userDetails.user.username);
-    //             } else {
-    //                 console.error(
-    //                     'Anuncio no encontrado en la lista de anuncios del usuario'
-    //                 );
-    //             }
-    //         } catch (error) {
-    //             console.error('Error trayendo datos del usuario:', error);
-    //         }
-    //     }
-
-    //     if (isLogged && token) {
-    //         fetchOwnerName();
-    //     }
-    // }, [id, isLogged, token]);
+    const isOwner = userDetails?.user._id === product.owner; //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
 
     //Redirige a home al hacer click en el heart Button
     const handleHeartButtonClick = (e: any) => {
         e.preventDefault();
 
         console.log('Heart button clicked');
-        redirect('/register');
+        router.push(`/`);
     };
 
     //Borrar un anuncio
-    const handleDeleteAdvert = () => {
-        setVisible(true); // muestro el dialog/popup para confirmar el borrado
-    };
-
-    const hideDialog = () => {
-        setVisible(false);
-    };
-
     const confirmDeleteAdvert = async () => {
         try {
             console.log('Token:', token);
@@ -127,13 +76,25 @@ export default async function Page({ params: { id } }: Props) {
                 return;
             }
 
-            redirect('/');
+            console.log('Borrado exitoso');
+            router.push(`/`);
         } catch (error) {
             console.error(
                 'Un error ha ocurrido al intentar eliminar el anuncio:',
                 error
             );
         }
+    };
+
+    const confirm1 = () => {
+        confirmDialog({
+            message: 'Are you sure you want to proceed?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            // defaultFocus: 'accept',
+            accept: () => confirmDeleteAdvert(),
+            // reject: () => console.log('rejected'),
+        });
     };
 
     return (
@@ -155,21 +116,9 @@ export default async function Page({ params: { id } }: Props) {
                         <span className="px-3">
                             {userDetails?.user.username}
                         </span>
-                        {/* <Avatar
-                            size="large"
-                            shape="circle"
-                            className="p-avatar p-element p-avatar-circle flex align-items-center justify-content-center"
-                        >
-                            {ownerName && (
-                                <span className="p-component p-avatar-text ng-star-inserted p-avatar-l">
-                                    {ownerName.charAt(0)}
-                                </span>
-                            )}
-                        </Avatar>
-                        <span className="px-3">{ownerName}</span> */}
                     </div>
                     <div className="flex justify-content-between align-items-center gap-2">
-                        {isLogged ? (
+                        {isLogged && isOwner ? (
                             <div className="flex justify-content-between align-items-center gap-2">
                                 <Button
                                     onClick={(e) => handleHeartButtonClick(e)}
@@ -190,16 +139,19 @@ export default async function Page({ params: { id } }: Props) {
                                 <Button
                                     icon="pi pi-trash"
                                     className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
-                                    onClick={handleDeleteAdvert}
+                                    // onClick={handleDeleteAdvert}
+                                    onClick={confirm1}
                                 />
+                                <Button label="Chat"></Button>
                             </div>
                         ) : (
-                            <div>
+                            <div className="flex justify-content-between align-items-center gap-2">
                                 <Button
                                     onClick={(e) => handleHeartButtonClick(e)}
                                     icon="pi pi-heart"
                                     className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
                                 />
+                                <Button label="Chat"></Button>
                             </div>
                         )}
                     </div>
@@ -264,20 +216,7 @@ export default async function Page({ params: { id } }: Props) {
                     className="p-3 w-full mt-auto cursor-pointer"
                 ></Button>
             </div>
-            {/* Confirm Popup */}
-            <ConfirmDialog
-                visible={visible}
-                onHide={hideDialog}
-                message="¿Deseas eliminar este anuncio?"
-                header="Confirmación"
-                icon="pi pi-exclamation-triangle"
-                pt={{
-                    headerTitle: {
-                        className: 'text-primary',
-                    },
-                }}
-                accept={confirmDeleteAdvert}
-            />
+            <ConfirmDialog />
         </div>
     );
 }

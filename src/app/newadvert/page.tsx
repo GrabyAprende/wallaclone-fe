@@ -84,7 +84,7 @@ export default function NewAdvertPage() {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(advertData),
+                    body: JSON.stringify({ advertData, tags: selectedTags }),
                 }
             );
             if (response.ok) {
