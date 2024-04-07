@@ -1,14 +1,16 @@
-
-
+'use client';
 import { Advert } from '@/types/general.types';
-//import { FC, useReducer } from "react";
-//import { classNames } from "primereact/utils";
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useContext } from 'react';
+import { SessionContext } from '@/context/sessionContext';
+
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 interface Props {
     params: {
@@ -24,6 +26,15 @@ async function getData(id: string) {
     return res.json();
 }
 
+async function getUserData(id: string) {
+    const res = await fetch(`https://coderstrikeback.es/api/get-user/${id}`);
+    if (!res.ok) {
+        console.log(Error);
+    }
+    console.log(res);
+    return res.json();
+}
+
 const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     tags.map((tag, index) => (
         <Tag key={index} value={tag} className="p-element">
@@ -34,8 +45,71 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     ));
 
 export default async function Page({ params: { id } }: Props) {
-   
+    const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
+    const router = useRouter();
+
     const product = (await getData(id)) as Advert;
+
+    //Obtengo username del creador del Anuncio
+    const userData = await getUserData(product.owner);
+    const owner = userData[0];
+    const usernameOwner = owner?.username;
+
+    //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
+    const isOwner = userDetails?.user._id === product.owner;
+
+    //Redirige a home al hacer click en el heart Button
+    const handleHeartButtonClick = (e: any) => {
+        e.preventDefault();
+
+        console.log('Heart button clicked');
+        router.push(`/`);
+    };
+
+    //Borrar un anuncio
+    const confirmDeleteAdvert = async () => {
+        try {
+            console.log('Token:', token);
+            if (!token) {
+                console.error('Token no disponible');
+                return;
+            }
+
+            const response = await fetch(
+                `https://coderstrikeback.es/api/advert/${id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                console.error('Error eliminando el anuncio:', response.status);
+                return;
+            }
+
+            console.log('Borrado exitoso');
+            router.push(`/`);
+        } catch (error) {
+            console.error(
+                'Un error ha ocurrido al intentar eliminar el anuncio:',
+                error
+            );
+        }
+    };
+
+    const confirm1 = () => {
+        confirmDialog({
+            message: 'Are you sure you want to proceed?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            // defaultFocus: 'accept',
+            accept: () => confirmDeleteAdvert(),
+            // reject: () => console.log('rejected'),
+        });
+    };
 
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
@@ -47,24 +121,52 @@ export default async function Page({ params: { id } }: Props) {
                             shape="circle"
                             className="p-avatar p-element p-avatar-circle flex align-items-center justify-content-center"
                         >
-                            <span className="p-component p-avatar-text ng-star-inserted p-avatar-l">
-                                U
-                            </span>
+                            {usernameOwner && (
+                                <span className="p-component p-avatar-text ng-star-inserted p-avatar-l">
+                                    {usernameOwner.charAt(0)}
+                                </span>
+                            )}
                         </Avatar>
-                        <span className="px-3">Dulce</span>
+                        <span className="px-3">{usernameOwner}</span>
                     </div>
-                    <Link href={{ pathname: "/register" }} className="flex justify-content-center">
-                    <Button
-                        icon="pi pi-heart"
-                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                        >
-                        <span
-                            className="p-ink"
-                            aria-hidden="true"
-                            role="presentation"
-                            ></span>
-                    </Button>
-                            </Link>
+                    <div className="flex justify-content-between align-items-center gap-2">
+                        {isLogged && isOwner ? (
+                            <div className="flex justify-content-between align-items-center gap-2">
+                                <Button
+                                    onClick={(e) => handleHeartButtonClick(e)}
+                                    icon="pi pi-heart"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                                />
+
+                                <Link
+                                    href={{
+                                        pathname: `/editAdvert/${id}`,
+                                    }}
+                                >
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                    />
+                                </Link>
+                                <Button
+                                    icon="pi pi-trash"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
+                                    // onClick={handleDeleteAdvert}
+                                    onClick={confirm1}
+                                />
+                                <Button label="Chat"></Button>
+                            </div>
+                        ) : (
+                            <div className="flex justify-content-between align-items-center gap-2">
+                                <Button
+                                    onClick={(e) => handleHeartButtonClick(e)}
+                                    icon="pi pi-heart"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                                />
+                                <Button label="Chat"></Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
@@ -75,14 +177,8 @@ export default async function Page({ params: { id } }: Props) {
                         src={product.image}
                         alt="product image"
                         className="w-full"
+                        style={{ objectFit: 'cover' }}
                     />
-                    {/* <Image
-                        width={600}
-                        height={400}
-                        src={"images/screen6.jpeg"}
-                        className="w-full"
-                        alt="Product Image"
-                    /> */}
                 </div>
                 <div className="flex align-items-center">
                     <span className="font-bold text-2xl text-900">
@@ -132,6 +228,7 @@ export default async function Page({ params: { id } }: Props) {
                     className="p-3 w-full mt-auto cursor-pointer"
                 ></Button>
             </div>
+            <ConfirmDialog />
         </div>
     );
 }

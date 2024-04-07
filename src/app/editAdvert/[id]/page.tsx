@@ -1,40 +1,51 @@
 'use client';
-
 import React, { useState, useEffect, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from 'primereact/multiselect';
-import { Advert, UserDetails } from '@/types/general.types';
+import { Advert } from '@/types/general.types';
 import { SessionContext } from '@/context/sessionContext';
 
-export default function NewAdvertPage() {
-    const { isLogged, token } = useContext(SessionContext);
+interface Props {
+    params: {
+        id: string;
+    };
+}
+
+export default function Page({ params: { id } }: Props) {
+    const { token } = useContext(SessionContext);
     const router = useRouter();
 
-    useEffect(() => {
-        if (!isLogged) router.push('/register');
-    }, [isLogged, router]);
-
+    // Estado para almacenar los datos del anuncio a editar
+    const [newAdvertData, setNewAdvertData] = useState<Advert | null>(null);
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
 
-    //Creo el estado inicial del anuncio nuevo
-    const [advertData, setAdvertData] = useState<{
-        name: string;
-        description: string;
-        price: string;
-        file: File | null;
-        tags: string[];
-        status: boolean;
-    }>({
-        name: '',
-        description: '',
-        price: '0',
-        file: null,
-        tags: [],
-        status: true,
-    });
+    // Función para cargar los datos del anuncio a editar
+    const fetchAdvertData = async () => {
+        try {
+            const response = await fetch(
+                `https://coderstrikeback.es/api/advert/id/${id}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (response.ok) {
+                const advertData = await response.json();
+                setNewAdvertData(advertData);
+                setSelectedTags(advertData.tags);
+            } else {
+                console.error('Error al traer datos del anuncio');
+            }
+        } catch (error) {
+            console.error('Error al traer datos del anuncio:', error);
+        }
+    };
 
+    // Función para cargar las etiquetas disponibles
     const fetchTags = async () => {
         try {
             const response = await fetch(
@@ -57,91 +68,44 @@ export default function NewAdvertPage() {
         }
     };
 
-    //Llamo las tags
     useEffect(() => {
-        if (!isLogged) router.push('/register')
+        fetchAdvertData();
         fetchTags();
     }, []);
 
-    //Actualizo los cambios
+    // Función para manejar los cambios en los campos del formulario
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        if (e.target) { // Verificar que e.target no sea null
-            const { name, value } = e.target;
-            let newValue: string | File | null = value;
-            if ((e.target as HTMLInputElement).files && (e.target as HTMLInputElement).files?.length) {
-                newValue = ((e.target as HTMLInputElement).files as FileList)[0];
-            }
-            setAdvertData((prevState) => ({
-                ...prevState,
-                [name]: newValue,
-            }));
-        }
+        const { name, value } = e.target;
+        setNewAdvertData((prevState) => ({
+            ...(prevState as Advert),
+            [name]: value,
+        }));
     };
 
-    //Manejo el envío del form
-    const handleSubmit = async (event: any) => {
-        event.preventDefault();
-
+    // Función para manejar el envío del formulario de edición
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
         try {
-            // utilizamos formData porque vamos a manejar un fichero
-            const formData = new FormData();
-
-            // Agregar todos los campos de adverData excepto 'image' a formData
-            for (const key in advertData) {
-
-                // safeKey nos asegura que la key es una key de adverData (para TypeScript)
-                const safeKey = key as keyof typeof advertData;
-
-                // Como tags es un array, lo trataremos diferente
-                if (safeKey === 'tags') {
-                    // Para los arrays, agregamos cada elemento individualmente.
-                    advertData[safeKey].forEach(tag => {
-                        formData.append(safeKey, tag);
-                    });
-
-                // Convertimos todos los valores a string, excepto los Files/Blobs.
-                } else if (safeKey !== 'file') {
-                    // Obtenemos el valor de adverData[safeKey] (nombre, precio, etc)
-                    const value = advertData[safeKey];
-
-                    // Convertimos valores booleanos y numéricos a string.
-                    if (typeof value === 'boolean' || typeof value === 'number') {
-                        formData.append(safeKey, value.toString());
-
-                    // Los strings se pueden añadir directamente.
-                    } else if (typeof value === 'string') {
-                        formData.append(safeKey, value);
-                    } 
+            const response = await fetch(
+                `https://coderstrikeback.es/api/advert/${id}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ newAdvertData, tags: selectedTags }),
                 }
-            }
-
-            // Agregamos el archivo a formData, si existe
-            if (advertData.file) {
-                formData.append('image', advertData.file, advertData.file.name);
-            }
-
-            // Ahora haremos el fetch sin la cabecera de json, porque la haremos con formData (tampoco haremos stringify)
-           const response = await fetch('https://coderstrikeback.es/api/advert/new', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-
-            // Si todo va bien y hay respuesta, redireccionamos al detalle del nuevo anuncio
-            // si no, pues lanzamos error
+            );
             if (response.ok) {
-                const newAdvert: Advert = await response.json();
-                router.push(`/adverts/${newAdvert._id}`);
+                router.push(`/adverts/${id}`);
             } else {
-                console.error('Failed to create advert');
+                console.error('Error al actualizar el anuncio');
             }
         } catch (error) {
-            console.error('Error creating advert:', error);
+            console.error('Error actualizando anuncio:', error);
         }
     };
 
@@ -152,16 +116,12 @@ export default function NewAdvertPage() {
             }}
             className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted"
         >
-            <h2>Sube tu anuncio</h2>
-            <div
-                className="px-3 py-4 w-full h-full flex flex-column surface-card lg:w-7"
-                style={{
-                    borderRadius: '20px',
-                }}
-            >
+            <h2>Edita tu anuncio</h2>
+            <div className="px-3 py-4 w-full h-full flex flex-column surface-card lg:w-7">
                 <h5>Información del producto</h5>
                 <div className="mt-4 p-col-6">
                     <form onSubmit={handleSubmit}>
+                        {/* Nombre */}
                         <div className="p-field mb-3">
                             <label
                                 className="block font-medium mb-2"
@@ -174,10 +134,11 @@ export default function NewAdvertPage() {
                                 type="text"
                                 id="name"
                                 name="name"
-                                value={advertData.name}
+                                value={newAdvertData ? newAdvertData.name : ''}
                                 onChange={handleChange}
                             />
                         </div>
+                        {/* Descripción */}
                         <div className="p-field mb-3">
                             <label
                                 htmlFor="description"
@@ -189,10 +150,15 @@ export default function NewAdvertPage() {
                                 className="p-inputtextarea p-inputtext p-component p-element w-full"
                                 id="description"
                                 name="description"
-                                value={advertData.description}
+                                value={
+                                    newAdvertData
+                                        ? newAdvertData.description
+                                        : ''
+                                }
                                 onChange={handleChange}
                             />
                         </div>
+                        {/* Precio */}
                         <div className="p-field mb-3">
                             <label
                                 htmlFor="price"
@@ -206,11 +172,14 @@ export default function NewAdvertPage() {
                                     type="number"
                                     id="price"
                                     name="price"
-                                    value={advertData.price}
+                                    value={
+                                        newAdvertData ? newAdvertData.price : ''
+                                    }
                                     onChange={handleChange}
                                 />
                             </span>
                         </div>
+                        {/* Imagen */}
                         <div className="p-field mb-3">
                             <label
                                 className="block font-medium mb-2"
@@ -222,15 +191,11 @@ export default function NewAdvertPage() {
                                 type="file"
                                 id="image"
                                 name="image"
-                                onChange={(event) =>{
-                                    setAdvertData((oldData) => ({
-                                        ...oldData,
-                                        file: (event.target.files as FileList)[0]
-                                    }))
-                                }}
+                                //value={newAdvertData ? newAdvertData.image : ''}
+                                onChange={handleChange}
                             />
                         </div>
-
+                        {/* Tags */}
                         <div className="p-field mb-3">
                             <label
                                 className="block font-medium mb-2"
@@ -243,23 +208,13 @@ export default function NewAdvertPage() {
                                 name="tags"
                                 value={selectedTags}
                                 options={tags}
-                                onChange={(e) => {
-                                    setSelectedTags(e.value)
-                                    setAdvertData((oldData) => ({
-                                        ...oldData,
-                                        tags: e.value
-                                    }))
-                                
-                                }
-                                    
-                                }
+                                onChange={(e) => setSelectedTags(e.value)}
                                 optionLabel="label"
                                 className="w-full"
                                 placeholder="Select Tags"
                             />
                         </div>
-
-                        <Button label="Crear Anuncio" type="submit" />
+                        <Button label="Actualizar Anuncio" type="submit" />
                     </form>
                 </div>
             </div>

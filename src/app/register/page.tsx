@@ -4,11 +4,9 @@ import React, { useContext } from "react";
 import { Button } from "primereact/button";
 import { LayoutContext } from "../../layout/context/layoutcontext";
 import { classNames } from "primereact/utils";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FormField } from "../../components/form/formField";
-import isStrongPassword from "validator/lib/isStrongPassword";
 import Link from "next/link";
-import { PasswordField } from "../../components/form/passwordField";
 import { PasswordFieldsSet } from "@/components/passwordFieldSet/PasswordFieldSet";
 
 type Inputs = {
@@ -23,8 +21,8 @@ const SignUpPage = () => {
 
     const router = useRouter();
     const containerClassName = classNames(
-        "surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden",
-        { "p-input-filled": layoutConfig.inputStyle === "filled" }
+        'surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden',
+        { 'p-input-filled': layoutConfig.inputStyle === 'filled' }
     );
 
     const {
@@ -35,24 +33,27 @@ const SignUpPage = () => {
         watch,
     } = useForm<Inputs>();
 
-    const password = watch("password"); //para asegurarme que las passwords sean las mismas
+    const password = watch('password'); //para asegurarme que las passwords sean las mismas
 
-    const onSubmit: SubmitHandler<Inputs> = async data => {
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { username, email, password, confirmPassword } = data;
 
         try {
-            const response = await fetch('https://coderstrikeback.es/api/register', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password,
-                    confirmPassword,
-                }),
-            });
+            const response = await fetch(
+                'https://coderstrikeback.es/api/register',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password,
+                        confirmPassword,
+                    }),
+                }
+            );
             if (response.ok) {
-                return router.push("/");
+                return router.push('/');
             } else {
                 const data = await response.json();
                 console.log({ error: data.message });
@@ -67,15 +68,15 @@ const SignUpPage = () => {
             <div className="flex flex-column align-items-center justify-content-center">
                 <div
                     style={{
-                        borderRadius: "56px",
-                        padding: "0.3rem",
+                        borderRadius: '56px',
+                        padding: '0.3rem',
                         background:
-                            "linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)",
+                            'linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)',
                     }}
                 >
                     <div
                         className="w-full surface-card py-8 px-5 sm:px-8"
-                        style={{ borderRadius: "53px" }}
+                        style={{ borderRadius: '53px' }}
                     >
                         <div className="text-center mb-5">
                             <div className="text-700 text-3xl font-medium mb-3">
@@ -91,12 +92,12 @@ const SignUpPage = () => {
                                 type="text"
                                 placeholder="Nombre de usuario"
                                 register={register}
-                                errorMessage={errors.username?.message || ""}
+                                errorMessage={errors.username?.message || ''}
                                 rules={{
-                                    required: "Nombre de usuario requerido",
+                                    required: 'Nombre de usuario requerido',
                                     minLength: {
                                         value: 3,
-                                        message: "Mínimo 3 caracteres",
+                                        message: 'Mínimo 3 caracteres',
                                     },
                                 }}
                             />
@@ -108,8 +109,8 @@ const SignUpPage = () => {
                                 type="email"
                                 placeholder="Dirección de email"
                                 register={register}
-                                errorMessage={errors.email?.message || ""}
-                                rules={{ required: "Email requerido" }}
+                                errorMessage={errors.email?.message || ''}
+                                rules={{ required: 'Email requerido' }}
                             />
 
                             {/* PASSWORD */}
@@ -121,22 +122,22 @@ const SignUpPage = () => {
                                 label="Contraseña"
                                 placeholder="Contraseña"
                                 register={register}
-                                errorMessage={errors.password?.message || ""}
+                                errorMessage={errors.password?.message || ''}
                                 toggleMask
                                 rules={{
-                                    required: "Contraseña requerida",
+                                    required: 'Contraseña requerida',
                                     minLength: {
                                         value: 8,
-                                        message: "Mínimo 8 caracteres",
+                                        message: 'Mínimo 8 caracteres',
                                     },
-                                    validate: value =>
+                                    validate: (value) =>
                                         isStrongPassword(value, {
                                             minLowercase: 1,
                                             minUppercase: 1,
                                             minNumbers: 1,
                                             minSymbols: 1,
                                         }) ||
-                                        "La contraseña debe tener mayúscula, número, símbolos y minúscula",
+                                        'La contraseña debe tener mayúscula, número, símbolos y minúscula',
                                 }}
                             />
 
@@ -147,15 +148,15 @@ const SignUpPage = () => {
                                 placeholder="Repite la contraseña"
                                 register={register}
                                 errorMessage={
-                                    errors.confirmPassword?.message || ""
+                                    errors.confirmPassword?.message || ''
                                 }
                                 toggleMask
                                 rules={{
                                     required:
-                                        "Confirmación de Password requerida",
-                                    validate: value =>
+                                        'Confirmación de Password requerida',
+                                    validate: (value) =>
                                         value === password ||
-                                        "Passwords no coinciden",
+                                        'Passwords no coinciden',
                                 }}
                             /> */}
 
