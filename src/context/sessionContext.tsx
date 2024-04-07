@@ -44,7 +44,7 @@ export const SessionProvider = ({ children }: ChildContainerProps) => {
         const handleUser = async () => {
             try {
                 // Intentamos obtener respuesta del endpoint
-                const userResponse = await fetch('http://35.169.246.52/api/adverts-user', {
+                const userResponse = await fetch('https://coderstrikeback.es/api/adverts-user', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}` 

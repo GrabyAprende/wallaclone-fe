@@ -10,33 +10,30 @@ import { SessionContext } from '@/context/sessionContext';
 export default function NewAdvertPage() {
     const { isLogged, token } = useContext(SessionContext);
     const router = useRouter();
-
-    useEffect(() => {
-        if (!isLogged) router.push('/register')
-    }, [isLogged, router]);
     
-    //Tags provisionales para probar:
-    // const staticTags = [
-    //     { label: 'Motor', value: 'motor' },
-    //     { label: 'Lifestyle', value: 'lifestyle' },
-    //     { label: 'Technology', value: 'technology' },
-    // ];
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
 
     //Creo el estado inicial del anuncio nuevo
-    const [advertData, setAdvertData] = useState({
+    const [advertData, setAdvertData] = useState<{
+        name: string;
+        description: string;
+        price: string;
+        file: File | null;
+        tags: string[];
+        status: boolean;
+    }>({
         name: '',
         description: '',
-        price: 0,
-        image: '',
+        price: '0',
+        file: null,
         tags: [],
         status: true,
     });
 
     const fetchTags = async () => {
         try {
-            const response = await fetch('http://35.169.246.52/api/tags', {
+            const response = await fetch('https://coderstrikeback.es/api/tags', {
                 method: 'GET',  
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -55,6 +52,7 @@ export default function NewAdvertPage() {
 
     //Llamo las tags
     useEffect(() => {
+        if (!isLogged) router.push('/register')
         fetchTags();
     }, []);
 
@@ -62,31 +60,75 @@ export default function NewAdvertPage() {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        const { name, value } = e.target;
-        setAdvertData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+        if (e.target) { // Verificar que e.target no sea null
+            const { name, value } = e.target;
+            let newValue: string | File | null = value;
+            if ((e.target as HTMLInputElement).files && (e.target as HTMLInputElement).files?.length) {
+                newValue = ((e.target as HTMLInputElement).files as FileList)[0];
+            }
+            setAdvertData((prevState) => ({
+                ...prevState,
+                [name]: newValue,
+            }));
+        }
     };
 
     //Manejo el envío del form
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
+    const handleSubmit = async (event: any) => {
+        event.preventDefault();
+
         try {
-            const response = await fetch(
-                'http://35.169.246.52/api/advert/new',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(advertData),
+            // utilizamos formData porque vamos a manejar un fichero
+            const formData = new FormData();
+
+            // Agregar todos los campos de adverData excepto 'image' a formData
+            for (const key in advertData) {
+
+                // safeKey nos asegura que la key es una key de adverData (para TypeScript)
+                const safeKey = key as keyof typeof advertData;
+
+                // Como tags es un array, lo trataremos diferente
+                if (safeKey === 'tags') {
+                    // Para los arrays, agregamos cada elemento individualmente.
+                    advertData[safeKey].forEach(tag => {
+                        formData.append(safeKey, tag);
+                    });
+
+                // Convertimos todos los valores a string, excepto los Files/Blobs.
+                } else if (safeKey !== 'file') {
+                    // Obtenemos el valor de adverData[safeKey] (nombre, precio, etc)
+                    const value = advertData[safeKey];
+
+                    // Convertimos valores booleanos y numéricos a string.
+                    if (typeof value === 'boolean' || typeof value === 'number') {
+                        formData.append(safeKey, value.toString());
+
+                    // Los strings se pueden añadir directamente.
+                    } else if (typeof value === 'string') {
+                        formData.append(safeKey, value);
+                    } 
                 }
-            );
+            }
+
+            // Agregamos el archivo a formData, si existe
+            if (advertData.file) {
+                formData.append('image', advertData.file, advertData.file.name);
+            }
+
+            // Ahora haremos el fetch sin la cabecera de json, porque la haremos con formData (tampoco haremos stringify)
+           const response = await fetch('https://coderstrikeback.es/api/advert/new', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+
+            // Si todo va bien y hay respuesta, redireccionamos al detalle del nuevo anuncio
+            // si no, pues lanzamos error
             if (response.ok) {
                 const newAdvert: Advert = await response.json();
-                //Mejor redireccionar al detalle?
                 router.push(`/adverts/${newAdvert._id}`);
             } else {
                 console.error('Failed to create advert');
@@ -173,7 +215,12 @@ export default function NewAdvertPage() {
                                 type="file"
                                 id="image"
                                 name="image"
-                                onChange={handleChange}
+                                onChange={(event) =>{
+                                    setAdvertData((oldData) => ({
+                                        ...oldData,
+                                        file: (event.target.files as FileList)[0]
+                                    }))
+                                }}
                             />
                         </div>
 
@@ -189,7 +236,16 @@ export default function NewAdvertPage() {
                                 name="tags"
                                 value={selectedTags}
                                 options={tags}
-                                onChange={(e) => setSelectedTags(e.value)}
+                                onChange={(e) => {
+                                    setSelectedTags(e.value)
+                                    setAdvertData((oldData) => ({
+                                        ...oldData,
+                                        tags: e.value
+                                    }))
+                                
+                                }
+                                    
+                                }
                                 optionLabel="label"
                                 className="w-full"
                                 placeholder="Select Tags"

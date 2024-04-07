@@ -5,10 +5,11 @@ import { Button } from "primereact/button";
 import { LayoutContext } from "../../layout/context/layoutcontext";
 import { classNames } from "primereact/utils";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { FormField } from "../components/form/formField";
+import { FormField } from "../../components/form/formField";
 import isStrongPassword from "validator/lib/isStrongPassword";
 import Link from "next/link";
-import { PasswordField } from "../components/form/passwordField";
+import { PasswordField } from "../../components/form/passwordField";
+import { PasswordFieldsSet } from "@/components/passwordFieldSet/PasswordFieldSet";
 
 type Inputs = {
     username: string;
@@ -40,7 +41,7 @@ const SignUpPage = () => {
         const { username, email, password, confirmPassword } = data;
 
         try {
-            const response = await fetch("http://35.169.246.52/api/register", {
+            const response = await fetch('https://coderstrikeback.es/api/register', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -112,7 +113,10 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD */}
-                            <PasswordField
+                            <PasswordFieldsSet watch={watch} register={register} errors={errors} />
+
+
+                            {/* <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
                                 placeholder="Contraseña"
@@ -137,7 +141,7 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD CONFIRMATION */}
-                            <PasswordField
+                            {/* <PasswordField 
                                 fieldId="confirmPassword"
                                 label="Repite la contraseña"
                                 placeholder="Repite la contraseña"
@@ -153,7 +157,7 @@ const SignUpPage = () => {
                                         value === password ||
                                         "Passwords no coinciden",
                                 }}
-                            />
+                            /> */}
 
                             {/* BOTON PARA REGISTRARSE */}
                             <Button

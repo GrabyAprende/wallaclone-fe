@@ -5,8 +5,8 @@ import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import '../styles/layout/layout.scss';
-import { Header } from './components/header/header';
-import { Footer } from './components/footer/footer';
+import { Header } from '../components/header/header';
+import { Footer } from '../components/footer/footer';
 import { SessionProvider } from '@/context/sessionContext';
 
 

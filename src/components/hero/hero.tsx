@@ -44,10 +44,10 @@ export const Hero = () => {
                             <>
                                 
                                 <Link href={{ pathname: "/register" }} className="flex justify-content-center">
-                                    <Button
-                                        label="Regístrate"
+                                <Button
+                                        label="¿Crear anuncio?"
                                         rounded
-                                        className="border-none ml-5 font-light line-height-2 bg-violet-500 text-white md:ml-0"
+                                        className="text-xl border-none mt-3 bg-violet-500 font-normal line-height-3 px-3 text-white"
                                     ></Button>
                                 </Link>
                             </>

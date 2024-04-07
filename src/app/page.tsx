@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import AdvertsList from "./components/list/advertsList";
-import { Hero } from "./hero/hero";
+import AdvertsList from "../components/list/advertsList";
+import { Hero } from "../components/hero/hero";
 
 const HomePage = () => {
     return (

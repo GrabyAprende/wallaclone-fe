@@ -8,6 +8,7 @@ import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Props {
     params: {
@@ -16,7 +17,7 @@ interface Props {
 }
 
 async function getData(id: string) {
-    const res = await fetch(`http://35.169.246.52/api/advert/id/${id}`);
+    const res = await fetch(`https://coderstrikeback.es/api/advert/id/${id}`);
     if (!res.ok) {
         console.log(Error);
     }
@@ -36,12 +37,6 @@ export default async function Page({ params: { id } }: Props) {
    
     const product = (await getData(id)) as Advert;
 
-    const handleHeartButtonClick = (e: any) => {
-        e.preventDefault();
-        
-       redirect('/register');
-    };
-
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
             <div className="shadow-2 p-3 h-full flex flex-column surface-card lg:w-7">
@@ -58,22 +53,25 @@ export default async function Page({ params: { id } }: Props) {
                         </Avatar>
                         <span className="px-3">Dulce</span>
                     </div>
+                    <Link href={{ pathname: "/register" }} className="flex justify-content-center">
                     <Button
-                        onClick={handleHeartButtonClick}
                         icon="pi pi-heart"
                         className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                    >
+                        >
                         <span
                             className="p-ink"
                             aria-hidden="true"
                             role="presentation"
-                        ></span>
+                            ></span>
                     </Button>
+                            </Link>
                 </div>
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
                 <div className="relative mb-3">
                     <Image
+                        width={600}
+                        height={400}
                         src={product.image}
                         alt="product image"
                         className="w-full"

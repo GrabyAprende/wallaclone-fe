@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 async function getData() {
-    const res = await fetch("http://35.169.246.52/api/adverts");
+    const res = await fetch('https://coderstrikeback.es/api/adverts');
 
     if (!res.ok){
         console.log("error")
