@@ -75,7 +75,7 @@ export const SessionProvider = ({ children }: ChildContainerProps) => {
         if (!!token) {
             handleUser();
         }
-    }, [token, router]);
+    }, [token]);
 
     const handleNewToken = (token: string) => {
         const encryptedToken = encrypt(token);

@@ -8,12 +8,8 @@ import { Advert, UserDetails } from '@/types/general.types';
 import { SessionContext } from '@/context/sessionContext';
 
 export default function NewAdvertPage() {
-    const { isLogged, token } = useContext(SessionContext);
+    const { token } = useContext(SessionContext);
     const router = useRouter();
-
-    useEffect(() => {
-        if (!isLogged) router.push('/register');
-    }, [isLogged, router]);
 
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
@@ -59,7 +55,6 @@ export default function NewAdvertPage() {
 
     //Llamo las tags
     useEffect(() => {
-        if (!isLogged) router.push('/register')
         fetchTags();
     }, []);
 
