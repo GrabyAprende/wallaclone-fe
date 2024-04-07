@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/app/utils/encryptation.utils';
 import { UserDetails } from './types/general.types';
+import { getCookie } from 'cookies-next';
 
 // Funcion para verificar si el usuario está verificado (le mandamos la cookie)
 // Retornará true si está verificado y false si no
@@ -59,15 +60,23 @@ export async function middleware(request: NextRequest) {
     const requiresAuth = protectedRoutes.some(route => pathname.startsWith(route));
 
     // Obtenemos (o no) el token de las cookies
-    let tokenCookie = request.cookies.get("token");
+    let tokenCookie = request.cookies.get("token")?.value || getCookie("token");
 
     // Esperamos a ver si el usuario está autenticado
-    const isLogged = await verifyUserAuthentication(tokenCookie?.value);
+    const isLogged = await verifyUserAuthentication(tokenCookie);
 
     // Si la ruta requiere autenticación y el usuario no está logueado, redirige a `/register`
     // Sino, redirigirá a la ruta protegida (porque sí está logeado)
     if (requiresAuth && !isLogged) {
       url.pathname = '/register';
+      return NextResponse.redirect(url);
+    }
+
+    // Si la ruta es login pero está logeado,
+    // lo redirigimos a la página principal
+    const loginRoute = '/login';
+    if (pathname.startsWith(loginRoute) && isLogged ) {
+      url.pathname = '/';
       return NextResponse.redirect(url);
     }
   

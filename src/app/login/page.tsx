@@ -2,7 +2,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
-import { Checkbox } from 'primereact/checkbox'; //primereact: libreria de react
 import { Button } from 'primereact/button';
 import { LayoutContext } from '../../layout/context/layoutcontext';
 import { classNames } from 'primereact/utils';
@@ -19,12 +18,8 @@ type Inputs = {
 };
 
 const LoginPage = () => {
-    const { isLogged, handleNewToken } = useContext(SessionContext);
+    const { handleNewToken } = useContext(SessionContext);
     const router = useRouter(); // accedemos al obj router para la navegación
-
-    useEffect(() => {
-        if (isLogged) router.push('/');
-    }, [isLogged, router]);
 
     const [checked, setChecked] = useState(false); //almacenamiento del estado checkbox
     const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
