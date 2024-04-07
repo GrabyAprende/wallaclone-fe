@@ -1,14 +1,16 @@
-"use client";
+'use client';
+import { Advert } from '@/types/general.types';
+import { Button } from 'primereact/button';
+import { Tag } from 'primereact/tag';
+import { Avatar } from 'primereact/avatar';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Advert } from "@/types/general.types";
-import { FC } from "react";
-import React, { useEffect, useState } from "react";
-import { classNames } from "primereact/utils";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { Avatar } from "primereact/avatar";
-import { NextPage } from "next";
-import Image from "next/image";
+import { useContext } from 'react';
+import { SessionContext } from '@/context/sessionContext';
+
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 interface Props {
     params: {
@@ -17,23 +19,23 @@ interface Props {
 }
 
 async function getData(id: string) {
-    const res = await fetch(`http://35.169.246.52/api/advert/id/${id}`);
+    const res = await fetch(`https://coderstrikeback.es/api/advert/id/${id}`);
     if (!res.ok) {
         console.log(Error);
     }
     return res.json();
 }
 
-const productDetails = {
-    name: "Sample Product",
-    price: "200",
-    description: "Product description",
-    image: "images/screen6.jpeg",
-    seller: "Dulce",
-    tags: ["Smartphones", "New"],
-};
+async function getUserData(id: string) {
+    const res = await fetch(`https://coderstrikeback.es/api/get-user/${id}`);
+    if (!res.ok) {
+        console.log(Error);
+    }
+    console.log(res);
+    return res.json();
+}
 
-const Tags = ({ tags }: { tags: Advert["tags"] }) =>
+const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     tags.map((tag, index) => (
         <Tag key={index} value={tag} className="p-element">
             <span className="p-tag p-component p-tag-rounded">
@@ -43,53 +45,140 @@ const Tags = ({ tags }: { tags: Advert["tags"] }) =>
     ));
 
 export default async function Page({ params: { id } }: Props) {
+    const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
+    const router = useRouter();
+
     const product = (await getData(id)) as Advert;
+
+    //Obtengo username del creador del Anuncio
+    const userData = await getUserData(product.owner);
+    const owner = userData[0];
+    const usernameOwner = owner?.username;
+
+    //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
+    const isOwner = userDetails?.user._id === product.owner;
+
+    //Redirige a home al hacer click en el heart Button
+    const handleHeartButtonClick = (e: any) => {
+        e.preventDefault();
+
+        console.log('Heart button clicked');
+        router.push(`/`);
+    };
+
+    //Borrar un anuncio
+    const confirmDeleteAdvert = async () => {
+        try {
+            console.log('Token:', token);
+            if (!token) {
+                console.error('Token no disponible');
+                return;
+            }
+
+            const response = await fetch(
+                `https://coderstrikeback.es/api/advert/${id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                console.error('Error eliminando el anuncio:', response.status);
+                return;
+            }
+
+            console.log('Borrado exitoso');
+            router.push(`/`);
+        } catch (error) {
+            console.error(
+                'Un error ha ocurrido al intentar eliminar el anuncio:',
+                error
+            );
+        }
+    };
+
+    const confirm1 = () => {
+        confirmDialog({
+            message: 'Are you sure you want to proceed?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            // defaultFocus: 'accept',
+            accept: () => confirmDeleteAdvert(),
+            // reject: () => console.log('rejected'),
+        });
+    };
 
     return (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
             <div className="shadow-2 p-3 h-full flex flex-column surface-card lg:w-7">
-                <div>
-                    <Avatar
-                        size="large"
-                        shape="circle"
-                        className="p-element mb-3"
-                    >
-                        <div
-                            data-pc-name="avatar"
-                            className="p-avatar p-component p-avatar-circle p-avatar-l"
+                <div className="flex justify-content-between align-items-center mb-3">
+                    <div className="flex justify-content-between align-items-center">
+                        <Avatar
+                            size="large"
+                            shape="circle"
+                            className="p-avatar p-element p-avatar-circle flex align-items-center justify-content-center"
                         >
-                            <span className="p-avatar-text ng-star-inserted">
-                                U
-                            </span>
-                        </div>
-                    </Avatar>
-                    <span className="px-3">Dulce</span>
+                            {usernameOwner && (
+                                <span className="p-component p-avatar-text ng-star-inserted p-avatar-l">
+                                    {usernameOwner.charAt(0)}
+                                </span>
+                            )}
+                        </Avatar>
+                        <span className="px-3">{usernameOwner}</span>
+                    </div>
+                    <div className="flex justify-content-between align-items-center gap-2">
+                        {isLogged && isOwner ? (
+                            <div className="flex justify-content-between align-items-center gap-2">
+                                <Button
+                                    onClick={(e) => handleHeartButtonClick(e)}
+                                    icon="pi pi-heart"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                                />
+
+                                <Link
+                                    href={{
+                                        pathname: `/editAdvert/${id}`,
+                                    }}
+                                >
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                    />
+                                </Link>
+                                <Button
+                                    icon="pi pi-trash"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
+                                    // onClick={handleDeleteAdvert}
+                                    onClick={confirm1}
+                                />
+                                <Button label="Chat"></Button>
+                            </div>
+                        ) : (
+                            <div className="flex justify-content-between align-items-center gap-2">
+                                <Button
+                                    onClick={(e) => handleHeartButtonClick(e)}
+                                    icon="pi pi-heart"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
+                                />
+                                <Button label="Chat"></Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
                 <div className="relative mb-3">
-                    <span
-                        className="surface-card text-900 shadow-2 px-3 py-2 absolute"
-                        style={{
-                            borderRadius: "1.5rem",
-                            left: "1rem",
-                            top: "1rem",
-                        }}
-                    >
-                        Category
-                    </span>
-                    <img
+                    <Image
                         src={product.image}
+                        width={600}
+                        height={500}
                         alt="product image"
                         className="w-full"
+                        style={{ objectFit: 'cover' }}
                     />
-                    {/* <Image
-                        width={600}
-                        height={400}
-                        src={"images/screen6.jpeg"}
-                        className="w-full"
-                        alt="Product Image"
-                    /> */}
                 </div>
                 <div className="flex align-items-center">
                     <span className="font-bold text-2xl text-900">
@@ -108,27 +197,38 @@ export default async function Page({ params: { id } }: Props) {
                 <p className="mt-0 mb-3 text-600 line-height-3">
                     {product.description}
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-3">
                     <Tags tags={product.tags} />
                 </div>
                 <hr className="my-3 mx-0 border-top-1 border-none surface-border" />
                 <ul className="list-none p-0 m-0 flex-grow-1">
                     <li className="flex align-items-center mb-3">
-                        <i className="pi pi-check-circle text-green-500 mr-2"></i>
+                        <i className="pi pi-globe text-green-500 mr-2"></i>
                         <span>En punto de recogida desde 2.59 EUR</span>
                     </li>
                     <li className="flex align-items-center mb-3">
-                        <i className="pi pi-check-circle text-green-500 mr-2"></i>
+                        <i className="pi pi-globe text-green-500 mr-2"></i>
                         <span>En mi dirección desde 3.49 EUR</span>
                     </li>
                 </ul>
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
-                <div className="flex align-items-center mb-3">
-                    <i className="pi pi-check-circle text-green-500 mr-2"></i>
-                    <h4>Protección Wallaclone</h4>
+                <div className="mb-3">
+                    <div className="flex align-items-center mb-3">
+                        <i className="pi pi-check-circle text-green-500 mr-2"></i>
+                        <h4 className="my-0">Protección Wallaclone</h4>
+                    </div>
+                    <p>
+                        Compra sin preocupaciones mediante nuestro servicio de
+                        envíos. Transacción protegida con reembolso, pagos
+                        seguros y ayuda siempre que la necesites.
+                    </p>
                 </div>
-                <Button label="Buy Now" className="p-3 w-full mt-auto"></Button>
+                <Button
+                    label="Buy Now"
+                    className="p-3 w-full mt-auto cursor-pointer"
+                ></Button>
             </div>
+            <ConfirmDialog />
         </div>
     );
 }
