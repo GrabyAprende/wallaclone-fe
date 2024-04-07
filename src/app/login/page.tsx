@@ -7,9 +7,9 @@ import { Button } from 'primereact/button';
 import { LayoutContext } from '../../layout/context/layoutcontext';
 import { classNames } from 'primereact/utils';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { FormField } from '../components/form/formField';
+import { FormField } from '../../components/form/formField';
 import Link from 'next/link';
-import { PasswordField } from '../components/form/passwordField';
+import { PasswordField } from '../../components/form/passwordField';
 import { SessionContext } from '@/context/sessionContext';
 
 //los tipos de los inputs del formulario
@@ -124,25 +124,14 @@ const LoginPage = () => {
                             />
                             {/* RECORDAR CONTRASEÑA */}
                             <div className="flex align-items-center justify-content-between mb-5 gap-5">
-                                <div className="flex align-items-center">
-                                    <Checkbox
-                                        inputId="rememberme1"
-                                        checked={checked}
-                                        onChange={(e) =>
-                                            setChecked(e.checked ?? false)
-                                        }
-                                        className="mr-2"
-                                    ></Checkbox>
-                                    <label htmlFor="rememberme1">
-                                        Recordar
-                                    </label>
-                                </div>
-                                <a
-                                    className="font-medium no-underline ml-2 text-right cursor-pointer"
-                                    style={{ color: 'var(--primary-color)' }}
-                                >
-                                    ¿Has olvidado tu contraseña?
-                                </a>
+                                {/* <div className="flex align-items-center">
+                                    <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
+                                    <label htmlFor="rememberme1">Recordar</label>
+                                </div> */}
+                                <Link href="/password-recovery" passHref
+                                    className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
+                                        ¿Has olvidado tu contraseña?
+                                </Link>
                             </div>
 
                             {/* BOTON PARA ACCEDER */}

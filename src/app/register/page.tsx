@@ -1,14 +1,13 @@
-'use client';
-import { useRouter } from 'next/navigation';
-import React, { useContext } from 'react';
-import { Button } from 'primereact/button';
-import { LayoutContext } from '../../layout/context/layoutcontext';
-import { classNames } from 'primereact/utils';
-import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
-import { FormField } from '../components/form/formField';
-import isStrongPassword from 'validator/lib/isStrongPassword';
-import Link from 'next/link';
-import { PasswordField } from '../components/form/passwordField';
+"use client";
+import { useRouter } from "next/navigation";
+import React, { useContext } from "react";
+import { Button } from "primereact/button";
+import { LayoutContext } from "../../layout/context/layoutcontext";
+import { classNames } from "primereact/utils";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { FormField } from "../../components/form/formField";
+import Link from "next/link";
+import { PasswordFieldsSet } from "@/components/passwordFieldSet/PasswordFieldSet";
 
 type Inputs = {
     username: string;
@@ -115,7 +114,10 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD */}
-                            <PasswordField
+                            <PasswordFieldsSet watch={watch} register={register} errors={errors} />
+
+
+                            {/* <PasswordField
                                 fieldId="password"
                                 label="Contraseña"
                                 placeholder="Contraseña"
@@ -140,7 +142,7 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD CONFIRMATION */}
-                            <PasswordField
+                            {/* <PasswordField 
                                 fieldId="confirmPassword"
                                 label="Repite la contraseña"
                                 placeholder="Repite la contraseña"
@@ -156,7 +158,7 @@ const SignUpPage = () => {
                                         value === password ||
                                         'Passwords no coinciden',
                                 }}
-                            />
+                            /> */}
 
                             {/* BOTON PARA REGISTRARSE */}
                             <Button

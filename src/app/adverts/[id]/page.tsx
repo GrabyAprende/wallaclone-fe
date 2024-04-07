@@ -1,5 +1,5 @@
 'use client';
-import { Advert } from '@/types/general.types';
+import { Advert, UserDetails } from '@/types/general.types';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SessionContext } from '@/context/sessionContext';
 
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
@@ -44,19 +44,51 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
         </Tag>
     ));
 
-export default async function Page({ params: { id } }: Props) {
+export default function Page({ params: { id } }: Props) {
     const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
     const router = useRouter();
+    
+    // Como vamos a usar useContext, este componente será de parte del cliente
+    // Por eso, ya no puede ser async Page, y por eso vamos a usar las herramientas
+    // de React como useState, en este caso, creatremos dos states: product y owner
+    const [product, setProduct] = useState<Advert>();
+    const [owner, setOwner] = useState<UserDetails["user"]>();
 
-    const product = (await getData(id)) as Advert;
+    // Crearemos una función asíncrona para obtener el producto
+    // Si no hay error, lo asignamos a su state product
+    const fetchProduct = async () => {
+        try {
+            const fetchedProduct: Advert = await getData(id) as Advert;
+            setProduct(fetchedProduct);
+        } catch (error) {
+            console.error('Error fetching product:', error);
+        }
+    };
 
-    //Obtengo username del creador del Anuncio
-    const userData = await getUserData(product.owner);
-    const owner = userData[0];
-    const usernameOwner = owner?.username;
+    // Cuando el componente cargue, llamamos a la funcion
+    // para hacer la carga del producto
+    useEffect(() => {
+        fetchProduct();
+    }, []);
+
+    // Cuando el producto cambie (la primera vez de null al producto obtenido)
+    // Si hay producto, obtendremos los datos del propietario (owner) y lo pondremos en su estado con setOwner
+    useEffect(() => {
+        if (product) {
+            const fetchUserData = async () => {
+                try {
+                    const fetchedUserData: UserDetails["user"][] = await getUserData(product.owner);
+                    setOwner(fetchedUserData[0]);
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                }
+            };
+            fetchUserData()
+        }
+    }, [product]);
 
     //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
-    const isOwner = userDetails?.user._id === product.owner;
+    const isOwner = userDetails?.user._id === product?.owner;
 
     //Redirige a home al hacer click en el heart Button
     const handleHeartButtonClick = (e: any) => {
@@ -100,18 +132,24 @@ export default async function Page({ params: { id } }: Props) {
         }
     };
 
+    // Esta es la función que se encargará de mostrar el mensaje del popUp (leer documentacion de primeReact)
     const confirm1 = () => {
         confirmDialog({
             message: 'Are you sure you want to proceed?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
-            // defaultFocus: 'accept',
             accept: () => confirmDeleteAdvert(),
-            // reject: () => console.log('rejected'),
         });
     };
 
-    return (
+    // Si no hay product o no hay owner, el componente mostrará un loading (porque aún se está cargando)
+    const isLoading = !product || !owner;   
+
+    // Si está cargando mostraremos un ... is loading (Esto puede ser temporal o mostrar un componente loader)
+    // Si tenemos producto y owner, mostramos el componente con los detalles del producto
+    return isLoading 
+        ? <p>... is loadking</p> 
+        : (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
             <div className="shadow-2 p-3 h-full flex flex-column surface-card lg:w-7">
                 <div className="flex justify-content-between align-items-center mb-3">
@@ -121,13 +159,13 @@ export default async function Page({ params: { id } }: Props) {
                             shape="circle"
                             className="p-avatar p-element p-avatar-circle flex align-items-center justify-content-center"
                         >
-                            {usernameOwner && (
+                            {owner.username && (
                                 <span className="p-component p-avatar-text ng-star-inserted p-avatar-l">
-                                    {usernameOwner.charAt(0)}
+                                    {owner.username.charAt(0)}
                                 </span>
                             )}
                         </Avatar>
-                        <span className="px-3">{usernameOwner}</span>
+                        <span className="px-3">{owner.username}</span>
                     </div>
                     <div className="flex justify-content-between align-items-center gap-2">
                         {isLogged && isOwner ? (
@@ -172,9 +210,9 @@ export default async function Page({ params: { id } }: Props) {
                 <hr className="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
                 <div className="relative mb-3">
                     <Image
-                        src={product.image}
                         width={600}
-                        height={500}
+                        height={400}
+                        src={product.image}
                         alt="product image"
                         className="w-full"
                         style={{ objectFit: 'cover' }}
