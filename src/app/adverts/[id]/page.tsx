@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from 'react';
 import { SessionContext } from '@/context/sessionContext';
 
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { MessagesContext } from '@/context/messagesContext';
 
 interface Props {
     params: {
@@ -21,7 +22,7 @@ interface Props {
 async function getData(id: string) {
     const res = await fetch(`https://coderstrikeback.es/api/advert/id/${id}`);
     if (!res.ok) {
-        console.log(Error);
+        console.log(res);
     }
     return res.json();
 }
@@ -29,9 +30,8 @@ async function getData(id: string) {
 async function getUserData(id: string) {
     const res = await fetch(`https://coderstrikeback.es/api/get-user/${id}`);
     if (!res.ok) {
-        console.log(Error);
+        console.log(res);
     }
-    console.log(res);
     return res.json();
 }
 
@@ -47,6 +47,14 @@ const Tags = ({ tags }: { tags: Advert['tags'] }) =>
 export default function Page({ params: { id } }: Props) {
     const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
     const router = useRouter();
+
+    // Recogemos del contexto MessageContext, 
+    // las estructuras (funciones) de mensajes que usaremos
+    const { 
+        showSuccessMessage,
+        showInfoMessage,
+        showErrorMessage
+    } = useContext(MessagesContext); 
     
     // Como vamos a usar useContext, este componente será de parte del cliente
     // Por eso, ya no puede ser async Page, y por eso vamos a usar las herramientas
@@ -61,7 +69,8 @@ export default function Page({ params: { id } }: Props) {
             const fetchedProduct: Advert = await getData(id) as Advert;
             setProduct(fetchedProduct);
         } catch (error) {
-            console.error('Error fetching product:', error);
+            // Así mostramos los mensajes de error al usuario
+            showErrorMessage('Error fetching product')
         }
     };
 
@@ -94,14 +103,14 @@ export default function Page({ params: { id } }: Props) {
     const handleHeartButtonClick = (e: any) => {
         e.preventDefault();
 
-        console.log('Heart button clicked');
+        // Asi mostramos los mensajes de info al usuario
+        showInfoMessage('Heart button clicked');
         router.push(`/`);
     };
 
     //Borrar un anuncio
     const confirmDeleteAdvert = async () => {
         try {
-            console.log('Token:', token);
             if (!token) {
                 console.error('Token no disponible');
                 return;
@@ -122,7 +131,8 @@ export default function Page({ params: { id } }: Props) {
                 return;
             }
 
-            console.log('Borrado exitoso');
+            // Así mostramos los mensajes de éxito al usuario
+            showSuccessMessage('Borrado exitoso');
             router.push(`/`);
         } catch (error) {
             console.error(

@@ -10,6 +10,7 @@ import { FormField } from '../../components/form/formField';
 import Link from 'next/link';
 import { PasswordField } from '../../components/form/passwordField';
 import { SessionContext } from '@/context/sessionContext';
+import { MessagesContext } from '@/context/messagesContext';
 
 //los tipos de los inputs del formulario
 type Inputs = {
@@ -21,8 +22,13 @@ const LoginPage = () => {
     const { handleNewToken } = useContext(SessionContext);
     const router = useRouter(); // accedemos al obj router para la navegación
 
-    const [checked, setChecked] = useState(false); //almacenamiento del estado checkbox
     const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
+    // Recogemos del contexto MessageContext, 
+    // las estructuras (funciones) de mensajes que usaremos
+    const { showSuccessMessage,
+        showInfoMessage,
+        showErrorMessage
+    } = useContext(MessagesContext); 
 
     const containerClassName = classNames(
         'surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden',
@@ -55,14 +61,20 @@ const LoginPage = () => {
                 const { token } = await loginResponse.json(); //desestructuramos el token
 
                 handleNewToken(token);
+                // Así mostramos los mensajes de exito al usuario
+                showSuccessMessage("Login success")
 
                 return router.push('/');
             } else {
                 const errorLoginData = await loginResponse.json();
+                // Así mostramos los mensajes de error al usuario
+                showErrorMessage(errorLoginData.error);
                 console.log({ error: errorLoginData });
             }
         } catch (err) {
             console.log(err);
+            // Así mostramos los mensajes de error al usuario
+            showErrorMessage("Hubo un error al intentar recuperar el usuario");
         }
     };
 

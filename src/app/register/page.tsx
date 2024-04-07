@@ -8,6 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { FormField } from "../../components/form/formField";
 import Link from "next/link";
 import { PasswordFieldsSet } from "@/components/passwordFieldSet/PasswordFieldSet";
+import { MessagesContext } from "@/context/messagesContext";
 
 type Inputs = {
     username: string;
@@ -18,6 +19,13 @@ type Inputs = {
 
 const SignUpPage = () => {
     const { layoutConfig } = useContext(LayoutContext);
+
+    // Recogemos del contexto MessageContext, 
+    // las estructuras (funciones) de mensajes que usaremos
+    const { 
+        showErrorMessage
+    } = useContext(MessagesContext); 
+    
 
     const router = useRouter();
     const containerClassName = classNames(
@@ -56,10 +64,14 @@ const SignUpPage = () => {
                 return router.push('/');
             } else {
                 const data = await response.json();
+                // Así mostramos los mensajes de error al usuario
+                showErrorMessage(data.message);
                 console.log({ error: data.message });
             }
         } catch (err) {
             console.log({ err });
+            // Así mostramos los mensajes de error al usuario
+            showErrorMessage("Error inesperado intentando registrar");
         }
     };
 

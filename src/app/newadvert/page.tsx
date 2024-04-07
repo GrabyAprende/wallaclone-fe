@@ -6,9 +6,13 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from 'primereact/multiselect';
 import { Advert, UserDetails } from '@/types/general.types';
 import { SessionContext } from '@/context/sessionContext';
+import { MessagesContext } from '@/context/messagesContext';
 
 export default function NewAdvertPage() {
     const { token } = useContext(SessionContext);
+    // Recogemos del contexto MessageContext, 
+    // las estructuras (funciones) de mensajes que usaremos
+    const { showSuccessMessage, showErrorMessage } = useContext(MessagesContext);
     const router = useRouter();
 
     const [tags, setTags] = useState([]);
@@ -46,10 +50,14 @@ export default function NewAdvertPage() {
                 const { tags } = await response.json();
                 setTags(tags.map((tag: any) => ({ label: tag, value: tag })));
             } else {
+                // Así mostramos los mensajes de error al usuario
+                showErrorMessage("Fallo al recuperar tags")
                 console.error('Failed to fetch tags');
             }
         } catch (error) {
             console.error('Error fetching tags:', error);
+            // Así mostramos los mensajes de error al usuario
+            showErrorMessage("Fallo al recuperar tags")
         }
     };
 
@@ -132,11 +140,17 @@ export default function NewAdvertPage() {
             if (response.ok) {
                 const newAdvert: Advert = await response.json();
                 router.push(`/adverts/${newAdvert._id}`);
+                // Así mostramos los mensajes de exito al usuario
+                showSuccessMessage("Nuevo anuncio creado");
             } else {
                 console.error('Failed to create advert');
+                // Así mostramos los mensajes de error al usuario
+                showSuccessMessage("Fallo al crear anuncio");
             }
         } catch (error) {
             console.error('Error creating advert:', error);
+            // Así mostramos los mensajes de error al usuario
+            showSuccessMessage("Fallo inesperado al crear anuncio");
         }
     };
 

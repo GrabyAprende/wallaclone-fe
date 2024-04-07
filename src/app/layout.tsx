@@ -8,6 +8,7 @@ import '../styles/layout/layout.scss';
 import { Header } from '../components/header/header';
 import { Footer } from '../components/footer/footer';
 import { SessionProvider } from '@/context/sessionContext';
+import { MessagesProvider } from '@/context/messagesContext';
 
 
 interface RootLayoutProps {
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <PrimeReactProvider>
                     <LayoutProvider>
                         <SessionProvider>
-                            <Header />
-                            {children}
-                            <Footer />
+                            <MessagesProvider>
+                                <Header />
+                                {children}
+                                <Footer />
+                            </MessagesProvider>
                         </SessionProvider>
                     </LayoutProvider>
                 </PrimeReactProvider>
