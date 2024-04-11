@@ -48,29 +48,26 @@ export default function Page({ params: { id } }: Props) {
     const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
     const router = useRouter();
 
-    // Recogemos del contexto MessageContext, 
+    // Recogemos del contexto MessageContext,
     // las estructuras (funciones) de mensajes que usaremos
-    const { 
-        showSuccessMessage,
-        showInfoMessage,
-        showErrorMessage
-    } = useContext(MessagesContext); 
-    
+    const { showSuccessMessage, showInfoMessage, showErrorMessage } =
+        useContext(MessagesContext);
+
     // Como vamos a usar useContext, este componente será de parte del cliente
     // Por eso, ya no puede ser async Page, y por eso vamos a usar las herramientas
     // de React como useState, en este caso, creatremos dos states: product y owner
     const [product, setProduct] = useState<Advert>();
-    const [owner, setOwner] = useState<UserDetails["user"]>();
+    const [owner, setOwner] = useState<UserDetails['user']>();
 
     // Crearemos una función asíncrona para obtener el producto
     // Si no hay error, lo asignamos a su state product
     const fetchProduct = async () => {
         try {
-            const fetchedProduct: Advert = await getData(id) as Advert;
+            const fetchedProduct: Advert = (await getData(id)) as Advert;
             setProduct(fetchedProduct);
         } catch (error) {
             // Así mostramos los mensajes de error al usuario
-            showErrorMessage('Error fetching product')
+            showErrorMessage('Error fetching product');
         }
     };
 
@@ -86,13 +83,14 @@ export default function Page({ params: { id } }: Props) {
         if (product) {
             const fetchUserData = async () => {
                 try {
-                    const fetchedUserData: UserDetails["user"][] = await getUserData(product.owner);
+                    const fetchedUserData: UserDetails['user'][] =
+                        await getUserData(product.owner);
                     setOwner(fetchedUserData[0]);
                 } catch (error) {
                     console.error('Error fetching product:', error);
                 }
             };
-            fetchUserData()
+            fetchUserData();
         }
     }, [product]);
 
@@ -153,13 +151,13 @@ export default function Page({ params: { id } }: Props) {
     };
 
     // Si no hay product o no hay owner, el componente mostrará un loading (porque aún se está cargando)
-    const isLoading = !product || !owner;   
+    const isLoading = !product || !owner;
 
     // Si está cargando mostraremos un ... is loading (Esto puede ser temporal o mostrar un componente loader)
     // Si tenemos producto y owner, mostramos el componente con los detalles del producto
-    return isLoading 
-        ? <p>... is loadking</p> 
-        : (
+    return isLoading ? (
+        <p>... is loading</p>
+    ) : (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
             <div className="shadow-2 p-3 h-full flex flex-column surface-card lg:w-7">
                 <div className="flex justify-content-between align-items-center mb-3">
