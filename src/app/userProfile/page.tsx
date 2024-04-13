@@ -7,8 +7,7 @@ import { Button } from 'primereact/button';
 import Image from 'next/image';
 
 const UserPage = () => {
-    const { token } = useContext(SessionContext);
-    console.log('Token from SessionContext:', token);
+    const { token, userDetails } = useContext(SessionContext);
     const [userAdverts, setUserAdverts] = useState<Advert[]>([]);
 
     useEffect(() => {
@@ -22,8 +21,6 @@ const UserPage = () => {
                         },
                     }
                 );
-
-                console.log('Token:', token);
 
                 if (!response.ok) {
                     throw new Error('Error al traer los anuncios del usuario');
@@ -51,8 +48,10 @@ const UserPage = () => {
                     }}
                     className="flex col-2 py-4 px-4 surface-section h-screen border-right-1 surface-border flex flex-column w-18rem select-none left-0 top-0"
                 >
-                    <span className="text-900 font-medium text-xl">User</span>
-                    <span className="py-2">email@email.com</span>
+                    <span className="text-900 font-medium text-xl">
+                        {userDetails?.user.username}
+                    </span>
+                    <span className="py-2">{userDetails?.user.email}</span>
                 </div>
                 <div className=" surface-ground py-8 col-10 xl:col-10">
                     <div className="flex justify-content-center mb-8 text-1xl">
@@ -108,16 +107,16 @@ const UserPage = () => {
                                                 <td>{advert.name}</td>
                                                 <td>{advert.price}€</td>
                                                 <td>
-                                                    <Button
-                                                        icon="pi pi-pencil"
-                                                        className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
-                                                    />
-                                                    {/* <Link
+                                                    <Link
                                                         href={{
-                                                            pathname: `/advert/id/${id}`,
+                                                            pathname: `/adverts/${advert._id}`,
                                                         }}
                                                     >
-                                                    </Link> */}
+                                                        <Button
+                                                            icon="pi pi-pencil"
+                                                            className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                                        />
+                                                    </Link>
                                                 </td>
                                             </tr>
                                         ))}

@@ -59,6 +59,9 @@ export default function Page({ params: { id } }: Props) {
     const [product, setProduct] = useState<Advert>();
     const [owner, setOwner] = useState<UserDetails['user']>();
 
+    //Estate de Favorito
+    const [isFavorite, setIsFavorite] = useState(false);
+
     // Crearemos una función asíncrona para obtener el producto
     // Si no hay error, lo asignamos a su state product
     const fetchProduct = async () => {
@@ -76,6 +79,13 @@ export default function Page({ params: { id } }: Props) {
     useEffect(() => {
         fetchProduct();
     }, []);
+
+    // Verifico si el anuncio es favorito
+    useEffect(() => {
+        if (userDetails && product) {
+            setIsFavorite(userDetails.user.favorites.includes(product._id));
+        }
+    }, [userDetails, product]);
 
     // Cuando el producto cambie (la primera vez de null al producto obtenido)
     // Si hay producto, obtendremos los datos del propietario (owner) y lo pondremos en su estado con setOwner
@@ -97,13 +107,46 @@ export default function Page({ params: { id } }: Props) {
     //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
     const isOwner = userDetails?.user._id === product?.owner;
 
-    //Redirige a home al hacer click en el heart Button
-    const handleHeartButtonClick = (e: any) => {
-        e.preventDefault();
+    //Lógica para que el usuario añada como el anuncio como Favorito
+    async function toggleFavoriteAdvert(advertId: string, token: string) {
+        try {
+            const response = await fetch(
+                `https://coderstrikeback.es/api/user/favorite/${advertId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-        // Asi mostramos los mensajes de info al usuario
-        showInfoMessage('Heart button clicked');
-        router.push(`/`);
+            if (response.ok) {
+                showSuccessMessage(
+                    'Anuncio agregado/eliminado de favoritos exitosamente'
+                );
+            } else {
+                const responseData = await response.json();
+                showErrorMessage(responseData.message);
+            }
+        } catch (error) {
+            console.error(error);
+            showErrorMessage(
+                'Error inesperando intentando agregar/eliminar anuncio a Favoritos'
+            );
+        }
+    }
+
+    const handleToggleFavorite = async (advertId: string) => {
+        try {
+            if (!token) {
+                console.error('Token no disponible');
+                return;
+            }
+            await toggleFavoriteAdvert(advertId, token);
+            setIsFavorite((prevState) => !prevState);
+        } catch (error) {
+            console.error('Error al agregar/eliminar de favoritos:', error);
+        }
     };
 
     //Borrar un anuncio
@@ -143,7 +186,7 @@ export default function Page({ params: { id } }: Props) {
     // Esta es la función que se encargará de mostrar el mensaje del popUp (leer documentacion de primeReact)
     const confirm1 = () => {
         confirmDialog({
-            message: 'Are you sure you want to proceed?',
+            message: '¿Estás seguro que quieres eliminar el anuncio?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => confirmDeleteAdvert(),
@@ -175,41 +218,72 @@ export default function Page({ params: { id } }: Props) {
                         </Avatar>
                         <span className="px-3">{owner.username}</span>
                     </div>
-                    <div className="flex justify-content-between align-items-center gap-2">
-                        {isLogged && isOwner ? (
-                            <div className="flex justify-content-between align-items-center gap-2">
-                                <Button
-                                    onClick={(e) => handleHeartButtonClick(e)}
-                                    icon="pi pi-heart"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                                />
 
+                    <div className="flex justify-content-between align-items-center gap-2">
+                        {isLogged ? (
+                            isOwner ? (
+                                // Si está logueado y es propietario del anuncio
+                                <div className="flex justify-content-between align-items-center gap-2">
+                                    <Link
+                                        href={{
+                                            pathname: `/editAdvert/${id}`,
+                                        }}
+                                    >
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                        />
+                                    </Link>
+                                    <Button
+                                        icon="pi pi-trash"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
+                                        onClick={confirm1}
+                                    />
+                                </div>
+                            ) : (
+                                // Si está logueado pero no es propietario del anuncio
+                                <div className="flex justify-content-between align-items-center gap-2">
+                                    <Button
+                                        onClick={() =>
+                                            handleToggleFavorite(product?._id)
+                                        }
+                                        icon="pi pi-heart"
+                                        className={`cursor-pointer p-element p-ripple p-button p-button-rounded ${
+                                            isFavorite
+                                                ? ''
+                                                : 'p-button-outlined'
+                                        } p-button p-component p-button-icon-only`}
+                                    />
+                                    <Button
+                                        className="p-button-outlined"
+                                        style={{
+                                            backgroundColor:
+                                                'rgb(226, 226, 255)',
+                                        }}
+                                        label="Contacta con el vendedor"
+                                    ></Button>
+                                </div>
+                            )
+                        ) : (
+                            // Si no está logueado
+                            <div className="flex justify-content-between align-items-center gap-2">
                                 <Link
                                     href={{
-                                        pathname: `/editAdvert/${id}`,
+                                        pathname: `/login`,
                                     }}
                                 >
                                     <Button
-                                        icon="pi pi-pencil"
-                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                        icon="pi pi-heart"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
                                     />
                                 </Link>
                                 <Button
-                                    icon="pi pi-trash"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
-                                    // onClick={handleDeleteAdvert}
-                                    onClick={confirm1}
-                                />
-                                <Button label="Chat"></Button>
-                            </div>
-                        ) : (
-                            <div className="flex justify-content-between align-items-center gap-2">
-                                <Button
-                                    onClick={(e) => handleHeartButtonClick(e)}
-                                    icon="pi pi-heart"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                                />
-                                <Button label="Chat"></Button>
+                                    className="p-button-outlined"
+                                    style={{
+                                        backgroundColor: 'rgb(226, 226, 255)',
+                                    }}
+                                    label="Contacta con el vendedor"
+                                ></Button>
                             </div>
                         )}
                     </div>
