@@ -147,19 +147,25 @@ const UserPage = () => {
                                                         className="ng-star-inserted"
                                                     >
                                                         <td>
-                                                            <Image
-                                                                width={80}
-                                                                height={80}
-                                                                src={
-                                                                    advert.image
-                                                                }
-                                                                alt="product image"
-                                                                className="shadow-4"
-                                                                style={{
-                                                                    objectFit:
-                                                                        'cover',
+                                                            <Link
+                                                                href={{
+                                                                    pathname: `/adverts/${advert._id}`,
                                                                 }}
-                                                            />
+                                                            >
+                                                                <Image
+                                                                    width={80}
+                                                                    height={80}
+                                                                    src={
+                                                                        advert.image
+                                                                    }
+                                                                    alt="product image"
+                                                                    className="shadow-4"
+                                                                    style={{
+                                                                        objectFit:
+                                                                            'cover',
+                                                                    }}
+                                                                />
+                                                            </Link>
                                                         </td>
                                                         <td>{advert.name}</td>
                                                         <td>{advert.price}€</td>
@@ -203,20 +209,28 @@ const UserPage = () => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-column align-items-center text-center mb-3">
-                                                    <Image
-                                                        width={200}
-                                                        height={200}
-                                                        src={advert.image}
-                                                        alt={advert.name}
-                                                        className="shadow-4 mb-2"
-                                                        style={{
-                                                            objectFit: 'cover',
+                                                <div>
+                                                    <Link
+                                                        href={{
+                                                            pathname: `/adverts/${advert._id}`,
                                                         }}
-                                                    />
-                                                    <span className="font-semibold">
-                                                        {advert.name}
-                                                    </span>
+                                                        className="flex flex-column align-items-center text-center mb-3"
+                                                    >
+                                                        <Image
+                                                            width={200}
+                                                            height={200}
+                                                            src={advert.image}
+                                                            alt={advert.name}
+                                                            className="shadow-4 mb-2"
+                                                            style={{
+                                                                objectFit:
+                                                                    'cover',
+                                                            }}
+                                                        />
+                                                        <span className="font-semibold">
+                                                            {advert.name}
+                                                        </span>
+                                                    </Link>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
                                                     <p
@@ -231,17 +245,13 @@ const UserPage = () => {
                                                     <span className="text-1l font-bold mt-2">
                                                         {advert.price}€
                                                     </span>
-                                                    <button
-                                                        className="p-ripple p-element p-button p-component p-button-icon-only"
-                                                        type="button"
-                                                    >
-                                                        <span className="pi pi-heart-fill p-button-icon ng-star-inserted"></span>
-                                                        <span
-                                                            className="p-ink"
-                                                            aria-hidden="true"
-                                                            role="presentation"
-                                                        ></span>
-                                                    </button>
+                                                    <i
+                                                        className="pi pi-heart-fill"
+                                                        style={{
+                                                            fontSize: '1.5rem',
+                                                            color: '#4F46E5',
+                                                        }}
+                                                    ></i>
                                                 </div>
                                             </div>
                                         ))}
