@@ -100,6 +100,37 @@ export default function NewAdvertPage() {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
 
+        // Validar que los campos obligatorios estén completos
+        if (!advertData.name || !advertData.description || !advertData.price) {
+            showErrorMessage(
+                'Por favor, completa todos los campos obligatorios.'
+            );
+            return;
+        }
+
+        // Validar que el precio sea mayor a 0
+        if (parseFloat(advertData.price) <= 0) {
+            showErrorMessage('El precio debe ser mayor a 0.');
+            return;
+        }
+
+        // Validar la longitud del nombre y descripción
+        if (advertData.name.length < 3) {
+            showErrorMessage(
+                'El nombre del artículo debe tener al menos 3 caracteres.'
+            );
+            return;
+        }
+        if (
+            advertData.description.length < 10 ||
+            advertData.description.length > 200
+        ) {
+            showErrorMessage(
+                'La descripción debe tener entre 10 y 200 caracteres.'
+            );
+            return;
+        }
+
         try {
             // utilizamos formData porque vamos a manejar un fichero
             const formData = new FormData();
@@ -202,6 +233,7 @@ export default function NewAdvertPage() {
                                 name="name"
                                 value={advertData.name}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="p-field mb-3">
@@ -217,6 +249,7 @@ export default function NewAdvertPage() {
                                 name="description"
                                 value={advertData.description}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="p-field mb-3">
@@ -234,6 +267,7 @@ export default function NewAdvertPage() {
                                     name="price"
                                     value={advertData.price}
                                     onChange={handleChange}
+                                    required
                                 />
                             </span>
                         </div>

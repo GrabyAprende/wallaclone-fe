@@ -94,6 +94,45 @@ export default function Page({ params: { id } }: Props) {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         try {
+            // Validar campos obligatorios
+            if (
+                !newAdvertData ||
+                !newAdvertData.name ||
+                !newAdvertData.description ||
+                !newAdvertData.price
+            ) {
+                console.error(
+                    'Por favor, complete todos los campos obligatorios.'
+                );
+                return;
+            }
+
+            if (newAdvertData.name.length < 3) {
+                console.error(
+                    'El nombre del artículo debe tener al menos 3 caracteres.'
+                );
+                return;
+            }
+            if (
+                !newAdvertData ||
+                (typeof newAdvertData.price === 'string' &&
+                    parseFloat(newAdvertData.price) <= 0) ||
+                (typeof newAdvertData.price !== 'string' &&
+                    newAdvertData.price <= 0)
+            ) {
+                console.error('El precio debe ser un número mayor que 0.');
+                return;
+            }
+            if (
+                newAdvertData.description.length < 10 ||
+                newAdvertData.description.length > 200
+            ) {
+                console.error(
+                    'La descripción debe tener entre 10 y 200 caracteres.'
+                );
+                return;
+            }
+
             const response = await fetch(
                 `https://coderstrikeback.es/api/advert/${id}`,
                 {
@@ -142,6 +181,7 @@ export default function Page({ params: { id } }: Props) {
                                 name="name"
                                 value={newAdvertData ? newAdvertData.name : ''}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         {/* Descripción */}
@@ -162,6 +202,7 @@ export default function Page({ params: { id } }: Props) {
                                         : ''
                                 }
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         {/* Precio */}
@@ -182,6 +223,7 @@ export default function Page({ params: { id } }: Props) {
                                         newAdvertData ? newAdvertData.price : ''
                                     }
                                     onChange={handleChange}
+                                    required
                                 />
                             </span>
                         </div>
