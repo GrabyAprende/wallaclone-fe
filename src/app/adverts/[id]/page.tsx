@@ -62,6 +62,9 @@ export default function Page({ params: { id } }: Props) {
     //Estate de Favorito
     const [isFavorite, setIsFavorite] = useState(false);
 
+    //Para compartir el anuncio
+    const [twitterText, setTwitterText] = useState('');
+
     // Crearemos una función asíncrona para obtener el producto
     // Si no hay error, lo asignamos a su state product
     const fetchProduct = async () => {
@@ -86,6 +89,14 @@ export default function Page({ params: { id } }: Props) {
             setIsFavorite(userDetails.user.favorites.includes(product._id));
         }
     }, [userDetails, product]);
+
+    // Creamos el texto del tweet
+    useEffect(() => {
+        if (product) {
+            const tweetText = `¡Mira este producto increíble! ${product.name} - ${product.price} € ${window.location.href}`;
+            setTwitterText(encodeURIComponent(tweetText));
+        }
+    }, [product]);
 
     // Cuando el producto cambie (la primera vez de null al producto obtenido)
     // Si hay producto, obtendremos los datos del propietario (owner) y lo pondremos en su estado con setOwner
@@ -239,6 +250,14 @@ export default function Page({ params: { id } }: Props) {
                                         className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
                                         onClick={confirm1}
                                     />
+                                    <Button
+                                        icon="pi pi-twitter"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-info p-button p-component p-button-icon-only"
+                                        onClick={() => {
+                                            const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+                                            window.open(twitterUrl, '_blank');
+                                        }}
+                                    />
                                 </div>
                             ) : (
                                 // Si está logueado pero no es propietario del anuncio
@@ -253,6 +272,14 @@ export default function Page({ params: { id } }: Props) {
                                                 ? ''
                                                 : 'p-button-outlined'
                                         } p-button p-component p-button-icon-only`}
+                                    />
+                                    <Button
+                                        icon="pi pi-twitter"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-info p-button p-component p-button-icon-only"
+                                        onClick={() => {
+                                            const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+                                            window.open(twitterUrl, '_blank');
+                                        }}
                                     />
                                     <Button
                                         className="p-button-outlined"
@@ -277,6 +304,14 @@ export default function Page({ params: { id } }: Props) {
                                         className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
                                     />
                                 </Link>
+                                <Button
+                                    icon="pi pi-twitter"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-info p-button p-component p-button-icon-only"
+                                    onClick={() => {
+                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+                                        window.open(twitterUrl, '_blank');
+                                    }}
+                                />
                                 <Button
                                     className="p-button-outlined"
                                     style={{
