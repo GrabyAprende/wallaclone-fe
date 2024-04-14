@@ -6,6 +6,9 @@ import Link from 'next/link';
 import { Button } from 'primereact/button';
 import Image from 'next/image';
 import { TabView, TabPanel } from 'primereact/tabview';
+import { DataTable } from 'primereact/datatable';
+import { DataView } from 'primereact/dataview';
+import { Column } from 'primereact/column';
 
 const UserPage = () => {
     const { token, userDetails } = useContext(SessionContext);
@@ -85,182 +88,141 @@ const UserPage = () => {
     }, [token]);
 
     return (
-        <div>
-            <div className="flex">
-                <div
-                    style={{
-                        borderRight: 'solid',
-                        borderRightWidth: '1px',
-                        borderRightColor: 'rgb(207 216 226 / 90%)',
-                        flexDirection: 'column',
-                    }}
-                    className="flex col-2 py-4 px-4 surface-section h-screen border-right-1 surface-border flex flex-column w-18rem select-none left-0 top-0"
-                >
-                    <span className="text-900 font-medium text-xl">
-                        {userDetails?.user.username}
-                    </span>
-                    <span className="py-2">{userDetails?.user.email}</span>
-                </div>
-                <div className="col-10 xl:col-10">
-                    <TabView>
-                        <TabPanel header="Mis anuncios">
-                            <div className="flex justify-content-center text-1xl">
-                                <div className="col-10 xl:col-10">
-                                    <h5 className="text-1xl font-small text-900 mt-6 mb-2">
-                                        Mis Anuncios
-                                    </h5>
-                                    <div className="surface-card p-4 shadow-2 border-round">
-                                        <table
-                                            style={{
-                                                width: '100%',
-                                            }}
-                                            role="table"
-                                            className=" p-datatable p-datatable-table ng-star-inserted"
-                                        >
-                                            <thead
-                                                style={{
-                                                    textAlign: 'left',
+        <div
+            className="flex"
+            style={{
+                borderTopStyle: 'solid',
+                borderTopWidth: '1px',
+                borderTopColor: 'rgb(207 216 226 / 90%)',
+            }}
+        >
+            <div
+                style={{
+                    borderRight: 'solid',
+                    borderRightWidth: '1px',
+                    borderRightColor: 'rgb(207 216 226 / 90%)',
+                    flexDirection: 'column',
+                }}
+                className="flex col-2 py-4 px-4 surface-section h-screen border-right-1 surface-border flex flex-column w-18rem select-none left-0 top-0"
+            >
+                <span className="text-900 font-medium text-xl">
+                    {userDetails?.user.username}
+                </span>
+                <span className="py-2">{userDetails?.user.email}</span>
+            </div>
+            <div className="col-10 xl:col-10">
+                <TabView>
+                    <TabPanel header="Mis anuncios">
+                        <div className="flex justify-content-center text-1xl">
+                            <div className="col-10 xl:col-10">
+                                <h5 className="text-1xl font-small text-900 mt-6 mb-2">
+                                    Mis Anuncios
+                                </h5>
+                                <DataTable
+                                    value={userAdverts}
+                                    scrollable
+                                    scrollHeight="550px"
+                                    style={{ minWidth: '50rem' }}
+                                >
+                                    <Column
+                                        header="Foto"
+                                        body={(rowData) => (
+                                            <Link
+                                                href={{
+                                                    pathname: `/adverts/${rowData._id}`,
                                                 }}
-                                                role="rowgroup"
-                                                className="p-datatable-thead text-align-left"
                                             >
-                                                <tr className="ng-star-inserted">
-                                                    <th role="columnheader">
-                                                        Foto
-                                                    </th>
-                                                    <th role="columnheader">
-                                                        Nombre del producto
-                                                    </th>
-                                                    <th role="columnheader">
-                                                        Precio
-                                                    </th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody
-                                                role="rowgroup"
-                                                className="p-element p-datatable-tbody"
+                                                <Image
+                                                    width={80}
+                                                    height={80}
+                                                    src={rowData.image}
+                                                    alt="product image"
+                                                    className="shadow-4"
+                                                    style={{
+                                                        objectFit: 'cover',
+                                                    }}
+                                                />
+                                            </Link>
+                                        )}
+                                    />
+                                    <Column
+                                        field="name"
+                                        header="Nombre del producto"
+                                    />
+                                    <Column field="price" header="Precio" />
+                                    <Column
+                                        header=""
+                                        body={(rowData) => (
+                                            <Link
+                                                href={{
+                                                    pathname: `/adverts/${rowData._id}`,
+                                                }}
                                             >
-                                                {userAdverts.map((advert) => (
-                                                    <tr
-                                                        key={advert._id}
-                                                        className="ng-star-inserted"
-                                                    >
-                                                        <td>
-                                                            <Link
-                                                                href={{
-                                                                    pathname: `/adverts/${advert._id}`,
-                                                                }}
-                                                            >
-                                                                <Image
-                                                                    width={80}
-                                                                    height={80}
-                                                                    src={
-                                                                        advert.image
-                                                                    }
-                                                                    alt="product image"
-                                                                    className="shadow-4"
-                                                                    style={{
-                                                                        objectFit:
-                                                                            'cover',
-                                                                    }}
-                                                                />
-                                                            </Link>
-                                                        </td>
-                                                        <td>{advert.name}</td>
-                                                        <td>{advert.price}€</td>
-                                                        <td>
-                                                            <Link
-                                                                href={{
-                                                                    pathname: `/adverts/${advert._id}`,
-                                                                }}
-                                                            >
-                                                                <Button
-                                                                    icon="pi pi-pencil"
-                                                                    className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
-                                                                />
-                                                            </Link>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                                <Button
+                                                    icon="pi pi-pencil"
+                                                    className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                                />
+                                            </Link>
+                                        )}
+                                    />
+                                </DataTable>
                             </div>
-                        </TabPanel>
-                        <TabPanel header="Favoritos">
-                            <div className="flex justify-content-center">
-                                <div className="col-10 xl:col-10">
-                                    <h5 className="text-1xl font-medium text-900 mt-6 mb-2">
-                                        Favoritos
-                                    </h5>
-                                    <div className="surface-card p-4 shadow-2 border-round grid grid-nogutter ng-star-inserted">
-                                        {favoriteAdverts.map((advert) => (
-                                            <div
-                                                key={advert._id}
-                                                className="card m-3 border-1 surface-border"
-                                            >
-                                                <div className="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
-                                                    <div className="flex align-items-center">
-                                                        <i className="pi pi-tags mr-2"></i>
-                                                        <span className="font-semibold">
-                                                            {advert.tags}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <Link
-                                                        href={{
-                                                            pathname: `/adverts/${advert._id}`,
-                                                        }}
-                                                        className="flex flex-column align-items-center text-center mb-3"
-                                                    >
-                                                        <Image
-                                                            width={200}
-                                                            height={200}
-                                                            src={advert.image}
-                                                            alt={advert.name}
-                                                            className="shadow-4 mb-2"
-                                                            style={{
-                                                                objectFit:
-                                                                    'cover',
-                                                            }}
-                                                        />
-                                                        <span className="font-semibold">
-                                                            {advert.name}
-                                                        </span>
-                                                    </Link>
-                                                </div>
-                                                <div className="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
-                                                    <p
-                                                        style={{
-                                                            lineClamp: '1',
-                                                        }}
-                                                    >
-                                                        {advert.description}
-                                                    </p>
-                                                </div>
-                                                <div className="flex align-items-center justify-content-between">
-                                                    <span className="text-1l font-bold mt-2">
-                                                        {advert.price}€
-                                                    </span>
-                                                    <i
-                                                        className="pi pi-heart-fill"
-                                                        style={{
-                                                            fontSize: '1.5rem',
-                                                            color: '#4F46E5',
-                                                        }}
-                                                    ></i>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                        </div>
+                    </TabPanel>
+                    <TabPanel header="Favoritos">
+                        <div className="flex justify-content-center">
+                            <div className="col-10 xl:col-10">
+                                <h5 className="text-1xl font-medium text-900 mt-6 mb-2">
+                                    Favoritos
+                                </h5>
+                                <DataView
+                                    value={favoriteAdverts}
+                                    layout="grid"
+                                    itemTemplate={favoriteProductTemplate}
+                                />
                             </div>
-                        </TabPanel>
-                    </TabView>
+                        </div>
+                    </TabPanel>
+                </TabView>
+            </div>
+        </div>
+    );
+};
+
+const favoriteProductTemplate = (advert: any) => {
+    return (
+        <div className="card m-3 border-1 surface-border">
+            <div className="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
+                <div className="flex align-items-center">
+                    <i className="pi pi-tags mr-2"></i>
+                    <span className="font-semibold">{advert.tags}</span>
                 </div>
+            </div>
+            <div>
+                <Link
+                    href={{ pathname: `/adverts/${advert._id}` }}
+                    className="flex flex-column align-items-center text-center mb-3"
+                >
+                    <Image
+                        width={200}
+                        height={200}
+                        src={advert.image}
+                        alt={advert.name}
+                        className="shadow-4 mb-2"
+                        style={{ objectFit: 'cover' }}
+                    />
+                    <span className="font-semibold">{advert.name}</span>
+                </Link>
+            </div>
+            <div className="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
+                <p style={{ lineClamp: '1' }}>{advert.description}</p>
+            </div>
+            <div className="flex align-items-center justify-content-between">
+                <span className="text-1l font-bold mt-2">{advert.price}€</span>
+                <i
+                    className="pi pi-heart-fill"
+                    style={{ fontSize: '1.5rem', color: '#4F46E5' }}
+                ></i>
             </div>
         </div>
     );

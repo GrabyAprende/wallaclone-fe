@@ -62,8 +62,10 @@ export default function Page({ params: { id } }: Props) {
     //Estate de Favorito
     const [isFavorite, setIsFavorite] = useState(false);
 
-    //Para compartir el anuncio
+    //Para compartir el anuncio en Twitter
     const [twitterText, setTwitterText] = useState('');
+    //Para contactar al vendedor
+    const [isEmailSending, setIsEmailSending] = useState(false);
 
     // Crearemos una función asíncrona para obtener el producto
     // Si no hay error, lo asignamos a su state product
@@ -194,6 +196,37 @@ export default function Page({ params: { id } }: Props) {
         }
     };
 
+    //Lógica para enviar un mail al propietario del anuncio
+    const sendEmailToVendor = async () => {
+        try {
+            setIsEmailSending(true);
+
+            const response = await fetch(
+                'https://coderstrikeback.es/api/contactvendor',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ advertId: id }),
+                }
+            );
+
+            if (response.ok) {
+                showSuccessMessage('Correo enviado al vendedor');
+            } else {
+                const responseData = await response.json();
+                showErrorMessage(responseData.message);
+            }
+        } catch (error) {
+            console.error('Error al enviar el correo:', error);
+            showErrorMessage('Error al enviar el correo');
+        } finally {
+            setIsEmailSending(false);
+        }
+    };
+
     // Esta es la función que se encargará de mostrar el mensaje del popUp (leer documentacion de primeReact)
     const confirm1 = () => {
         confirmDialog({
@@ -282,12 +315,17 @@ export default function Page({ params: { id } }: Props) {
                                         }}
                                     />
                                     <Button
+                                        onClick={sendEmailToVendor}
                                         className="p-button-outlined"
                                         style={{
                                             backgroundColor:
                                                 'rgb(226, 226, 255)',
                                         }}
-                                        label="Contacta con el vendedor"
+                                        label={
+                                            isEmailSending
+                                                ? 'Enviando correo...'
+                                                : 'Contacta con el vendedor'
+                                        }
                                     ></Button>
                                 </div>
                             )
@@ -312,13 +350,20 @@ export default function Page({ params: { id } }: Props) {
                                         window.open(twitterUrl, '_blank');
                                     }}
                                 />
-                                <Button
-                                    className="p-button-outlined"
-                                    style={{
-                                        backgroundColor: 'rgb(226, 226, 255)',
+                                <Link
+                                    href={{
+                                        pathname: `/login`,
                                     }}
-                                    label="Contacta con el vendedor"
-                                ></Button>
+                                >
+                                    <Button
+                                        className="p-button-outlined"
+                                        style={{
+                                            backgroundColor:
+                                                'rgb(226, 226, 255)',
+                                        }}
+                                        label="Contacta con el vendedor"
+                                    ></Button>
+                                </Link>
                             </div>
                         )}
                     </div>
