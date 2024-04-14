@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from 'primereact/multiselect';
+import { SelectButton } from 'primereact/selectbutton';
 import { Advert } from '@/types/general.types';
 import { SessionContext } from '@/context/sessionContext';
 
@@ -11,6 +12,11 @@ interface Props {
         id: string;
     };
 }
+
+const statusOptions = [
+    { label: 'En venta', value: true },
+    { label: 'Comprando', value: false },
+];
 
 export default function Page({ params: { id } }: Props) {
     const { token } = useContext(SessionContext);
@@ -178,6 +184,27 @@ export default function Page({ params: { id } }: Props) {
                                     onChange={handleChange}
                                 />
                             </span>
+                        </div>
+                        {/*Status*/}
+                        <div className="p-field mb-3">
+                            <label
+                                className="block font-medium mb-2"
+                                htmlFor="status"
+                            >
+                                Estado
+                            </label>
+                            <SelectButton
+                                value={
+                                    newAdvertData ? newAdvertData.status : true
+                                }
+                                options={statusOptions}
+                                onChange={(e) =>
+                                    setNewAdvertData((prevState) => ({
+                                        ...(prevState as Advert),
+                                        status: e.value,
+                                    }))
+                                }
+                            />
                         </div>
                         {/* Imagen */}
                         <div className="p-field mb-3">

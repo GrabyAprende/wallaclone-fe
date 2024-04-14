@@ -300,10 +300,27 @@ export default function Page({ params: { id } }: Props) {
                         style={{ objectFit: 'cover' }}
                     />
                 </div>
-                <div className="flex align-items-center">
+                <div className="flex gap-4 align-items-center">
                     <span className="font-bold text-2xl text-900">
                         {product.price} €
                     </span>
+                    {product.status ? (
+                        <span className="flex align-items-center">
+                            <i
+                                className="pi pi-cart-plus text-gray-500 mr-1"
+                                style={{ fontSize: '1.5rem' }}
+                            ></i>
+                            <span className="font-medium">En venta</span>
+                        </span>
+                    ) : (
+                        <span className="flex align-items-center">
+                            <i
+                                className="pi pi-money-bill text-gray-500 mr-1"
+                                style={{ fontSize: '1.5rem' }}
+                            ></i>
+                            <span className="font-medium">Comprando</span>
+                        </span>
+                    )}
                 </div>
                 <div className="flex justify-content-between align-items-center mb-3">
                     <span className="text-900 font-medium text-xl">
@@ -317,7 +334,7 @@ export default function Page({ params: { id } }: Props) {
                 <p className="mt-0 mb-3 text-600 line-height-3">
                     {product.description}
                 </p>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap align-items-center gap-2 mb-3">
                     <Tags tags={product.tags} />
                 </div>
                 <hr className="my-3 mx-0 border-top-1 border-none surface-border" />
