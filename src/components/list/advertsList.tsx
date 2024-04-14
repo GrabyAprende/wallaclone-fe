@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 async function getData() {
     const res = await fetch('https://coderstrikeback.es/api/adverts');
+                             
 
     if (!res.ok) {
         console.log('error');

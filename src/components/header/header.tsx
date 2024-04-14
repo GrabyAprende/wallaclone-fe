@@ -30,7 +30,6 @@ export const Header = () => {
     }
     const handleSubmitSearch = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        console.log(search)
         router.push(`/search/${search}`);
     }
 
