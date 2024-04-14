@@ -9,11 +9,16 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { DataTable } from 'primereact/datatable';
 import { DataView } from 'primereact/dataview';
 import { Column } from 'primereact/column';
+import { MessagesContext } from '@/context/messagesContext';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 const UserPage = () => {
     const { token, userDetails } = useContext(SessionContext);
     const [userAdverts, setUserAdverts] = useState<Advert[]>([]);
     const [favoriteAdverts, setFavoriteAdverts] = useState<Advert[]>([]);
+
+    const { showSuccessMessage, showInfoMessage, showErrorMessage } =
+        useContext(MessagesContext);
 
     useEffect(() => {
         const fetchUserAdverts = async () => {
@@ -87,6 +92,51 @@ const UserPage = () => {
         fetchFavoriteAdverts();
     }, [token]);
 
+    const confirmDeleteAdvert = async (advertId: string) => {
+        try {
+            if (!token) {
+                console.error('Token no disponible');
+                return;
+            }
+
+            const response = await fetch(
+                `https://coderstrikeback.es/api/advert/${advertId}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                console.error('Error eliminando el anuncio:', response.status);
+                return;
+            }
+
+            showSuccessMessage('Borrado exitoso');
+            const updatedAdverts = userAdverts.filter(
+                (advert) => advert._id !== advertId
+            );
+            setUserAdverts(updatedAdverts);
+        } catch (error) {
+            console.error(
+                'Un error ha ocurrido al intentar eliminar el anuncio:',
+                error
+            );
+            showErrorMessage('Error al eliminar el anuncio');
+        }
+    };
+
+    const confirm1 = (advertId: string) => {
+        confirmDialog({
+            message: '¿Estás seguro que quieres eliminar el anuncio?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => confirmDeleteAdvert(advertId),
+        });
+    };
+
     return (
         <div
             className="flex"
@@ -153,19 +203,29 @@ const UserPage = () => {
                                     <Column
                                         header=""
                                         body={(rowData) => (
-                                            <Link
-                                                href={{
-                                                    pathname: `/adverts/${rowData._id}`,
-                                                }}
-                                            >
+                                            <div className="flex gap-2">
+                                                <Link
+                                                    href={{
+                                                        pathname: `/editAdvert/${rowData._id}`,
+                                                    }}
+                                                >
+                                                    <Button
+                                                        icon="pi pi-pencil"
+                                                        className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                                    />
+                                                </Link>
                                                 <Button
-                                                    icon="pi pi-pencil"
-                                                    className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                                    icon="pi pi-trash"
+                                                    className="cursor-pointer p-element p-ripple p-button p-button-secondary p-button-outlined p-button p-component p-button-icon-only p-button-danger"
+                                                    onClick={() =>
+                                                        confirm1(rowData._id)
+                                                    }
                                                 />
-                                            </Link>
+                                            </div>
                                         )}
                                     />
                                 </DataTable>
+                                <ConfirmDialog />
                             </div>
                         </div>
                     </TabPanel>
