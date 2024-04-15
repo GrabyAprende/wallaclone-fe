@@ -134,18 +134,30 @@ export default function Page({ params: { id } }: Props) {
             );
 
             if (response.ok) {
-                showSuccessMessage(
-                    'Anuncio agregado/eliminado de favoritos exitosamente'
-                );
+                if (isFavorite) {
+                    showSuccessMessage(
+                        'Anuncio eliminado de favoritos exitosamente'
+                    );
+                } else {
+                    showSuccessMessage(
+                        'Anuncio agregado a favoritos exitosamente'
+                    );
+                }
             } else {
                 const responseData = await response.json();
                 showErrorMessage(responseData.message);
             }
         } catch (error) {
             console.error(error);
-            showErrorMessage(
-                'Error inesperando intentando agregar/eliminar anuncio a Favoritos'
-            );
+            if (isFavorite) {
+                showErrorMessage(
+                    'Error inesperando intentando eliminar anuncio de Favoritos'
+                );
+            } else {
+                showErrorMessage(
+                    'Error inesperando intentando agregar anuncio a Favoritos'
+                );
+            }
         }
     }
 
