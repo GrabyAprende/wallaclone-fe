@@ -10,16 +10,28 @@ import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { Logo } from "../form/logo";
 import { SessionContext } from "@/context/sessionContext";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
     const [isHidden, setIsHidden] = useState(false);
     const menuRef = useRef<HTMLElement | null>(null);
+    const [search, setSearch] = useState("")
+    const router = useRouter();
 
     const toggleMenuItemClick = () => {
         setIsHidden(prevState => !prevState);
     };
 
     const { isLogged, userDetails, logout } = useContext(SessionContext); //accedemos al estado global de la app
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        setSearch(e.target.value)
+    }
+    const handleSubmitSearch = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        router.push(`/search/${search}`);
+    }
 
     return (
         <div className="py-4 px-4 mx-0 w-full bg-white lg:px-8 flex align-items-center justify-content-between relative lg:static">
@@ -48,9 +60,11 @@ export const Header = () => {
                 <div className="flex flex-column w-full">
                     {/* BARRA DE BUSQUEDA */}
                     <div className="m-0 mb-2 md:ml-5">
-                        <span className="p-input-icon-right w-full">
-                            <InputText className="w-full" type="text" placeholder="Search" />
-                            <i className="pi pi-search" />
+                        <span className="w-full relative">
+                            <form onSubmit={handleSubmitSearch}>
+                            <InputText className="w-full" type="text" value={search} onChange={handleOnChange}  placeholder="Comienza a comprar o vender" />
+                            </form>
+                            <i className="pi pi-search absolute right-0 top-0 cursor-pointer text-400 p-3" onClick={handleSubmitSearch} />
                         </span>
                     </div>
 
