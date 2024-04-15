@@ -6,6 +6,8 @@ import { MultiSelect } from 'primereact/multiselect';
 import { SelectButton } from 'primereact/selectbutton';
 import { Advert } from '@/types/general.types';
 import { SessionContext } from '@/context/sessionContext';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { MessagesContext } from '@/context/messagesContext';
 
 interface Props {
     params: {
@@ -27,6 +29,9 @@ export default function Page({ params: { id } }: Props) {
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
 
+    const { showSuccessMessage, showInfoMessage, showErrorMessage } =
+        useContext(MessagesContext);
+
     // Función para cargar los datos del anuncio a editar
     const fetchAdvertData = async () => {
         try {
@@ -44,10 +49,10 @@ export default function Page({ params: { id } }: Props) {
                 setNewAdvertData(advertData);
                 setSelectedTags(advertData.tags);
             } else {
-                console.error('Error al traer datos del anuncio');
+                showErrorMessage('Error al traer datos del anuncio');
             }
         } catch (error) {
-            console.error('Error al traer datos del anuncio:', error);
+            showErrorMessage('Error al traer datos del anuncio');
         }
     };
 
@@ -67,10 +72,10 @@ export default function Page({ params: { id } }: Props) {
                 const { tags } = await response.json();
                 setTags(tags.map((tag: any) => ({ label: tag, value: tag })));
             } else {
-                console.error('Failed to fetch tags');
+                showErrorMessage('Error al traer los tags');
             }
         } catch (error) {
-            console.error('Error fetching tags:', error);
+            showErrorMessage('Error al traer los tags');
         }
     };
 
@@ -101,14 +106,14 @@ export default function Page({ params: { id } }: Props) {
                 !newAdvertData.description ||
                 !newAdvertData.price
             ) {
-                console.error(
+                showErrorMessage(
                     'Por favor, complete todos los campos obligatorios.'
                 );
                 return;
             }
 
             if (newAdvertData.name.length < 3) {
-                console.error(
+                showErrorMessage(
                     'El nombre del artículo debe tener al menos 3 caracteres.'
                 );
                 return;
@@ -120,14 +125,14 @@ export default function Page({ params: { id } }: Props) {
                 (typeof newAdvertData.price !== 'string' &&
                     newAdvertData.price <= 0)
             ) {
-                console.error('El precio debe ser un número mayor que 0.');
+                showErrorMessage('El precio debe ser un número mayor que 0.');
                 return;
             }
             if (
                 newAdvertData.description.length < 10 ||
                 newAdvertData.description.length > 200
             ) {
-                console.error(
+                showErrorMessage(
                     'La descripción debe tener entre 10 y 200 caracteres.'
                 );
                 return;
@@ -146,11 +151,13 @@ export default function Page({ params: { id } }: Props) {
             );
             if (response.ok) {
                 router.push(`/adverts/${id}`);
+                showSuccessMessage('Anuncio editado exitosamente');
             } else {
                 console.error('Error al actualizar el anuncio');
             }
         } catch (error) {
             console.error('Error actualizando anuncio:', error);
+            showErrorMessage('Error al actualizar el anuncio');
         }
     };
 
