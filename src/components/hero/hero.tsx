@@ -55,10 +55,11 @@ export const Hero = () => {
                 </div>
             
             </div>
-            <div className="flex justify-content-center md:justify-content-end mt-3">
+            <div className="flex justify-content-center md:justify-content-end mt-3 relative">
                 <Image
                     fill
                     src="/images/screen-1.webp"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     alt="Hero Image"
                     className="relative w-9 md:w-6"
                 />
