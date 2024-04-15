@@ -69,7 +69,7 @@ export const Header = () => {
                     </div>
 
                     {/* NAVEGACION */}
-                    <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
+                    {/* <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                         <li>
                             <Link
                                 href="/hogar-y-vida"
@@ -100,7 +100,7 @@ export const Header = () => {
                                 <Ripple />
                             </a>
                         </li>
-                    </ul>
+                    </ul> */}
                 </div>
 
                 <div className="flex justify-content-end py-3 md:flex-column md:ml-5">
