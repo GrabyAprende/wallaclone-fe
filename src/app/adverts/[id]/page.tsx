@@ -48,29 +48,34 @@ export default function Page({ params: { id } }: Props) {
     const { isLogged, userDetails, token } = useContext(SessionContext); //accedemos al estado global de la app
     const router = useRouter();
 
-    // Recogemos del contexto MessageContext, 
+    // Recogemos del contexto MessageContext,
     // las estructuras (funciones) de mensajes que usaremos
-    const { 
-        showSuccessMessage,
-        showInfoMessage,
-        showErrorMessage
-    } = useContext(MessagesContext); 
-    
+    const { showSuccessMessage, showInfoMessage, showErrorMessage } =
+        useContext(MessagesContext);
+
     // Como vamos a usar useContext, este componente será de parte del cliente
     // Por eso, ya no puede ser async Page, y por eso vamos a usar las herramientas
     // de React como useState, en este caso, creatremos dos states: product y owner
     const [product, setProduct] = useState<Advert>();
-    const [owner, setOwner] = useState<UserDetails["user"]>();
+    const [owner, setOwner] = useState<UserDetails['user']>();
+
+    //Estate de Favorito
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    //Para compartir el anuncio en Twitter
+    const [twitterText, setTwitterText] = useState('');
+    //Para contactar al vendedor
+    const [isEmailSending, setIsEmailSending] = useState(false);
 
     // Crearemos una función asíncrona para obtener el producto
     // Si no hay error, lo asignamos a su state product
     const fetchProduct = async () => {
         try {
-            const fetchedProduct: Advert = await getData(id) as Advert;
+            const fetchedProduct: Advert = (await getData(id)) as Advert;
             setProduct(fetchedProduct);
         } catch (error) {
             // Así mostramos los mensajes de error al usuario
-            showErrorMessage('Error fetching product')
+            showErrorMessage('Error fetching product');
         }
     };
 
@@ -80,32 +85,81 @@ export default function Page({ params: { id } }: Props) {
         fetchProduct();
     }, []);
 
+    // Verifico si el anuncio es favorito
+    useEffect(() => {
+        if (userDetails && product) {
+            setIsFavorite(userDetails.user.favorites.includes(product._id));
+        }
+    }, [userDetails, product]);
+
+    // Creamos el texto del tweet
+    useEffect(() => {
+        if (product) {
+            const tweetText = `¡Mira este producto increíble! ${product.name} - ${product.price} € ${window.location.href}`;
+            setTwitterText(encodeURIComponent(tweetText));
+        }
+    }, [product]);
+
     // Cuando el producto cambie (la primera vez de null al producto obtenido)
     // Si hay producto, obtendremos los datos del propietario (owner) y lo pondremos en su estado con setOwner
     useEffect(() => {
         if (product) {
             const fetchUserData = async () => {
                 try {
-                    const fetchedUserData: UserDetails["user"][] = await getUserData(product.owner);
+                    const fetchedUserData: UserDetails['user'][] =
+                        await getUserData(product.owner);
                     setOwner(fetchedUserData[0]);
                 } catch (error) {
                     console.error('Error fetching product:', error);
                 }
             };
-            fetchUserData()
+            fetchUserData();
         }
     }, [product]);
 
     //Comprobar que el usuario loggeado sea el mismo que el creador del anuncio
     const isOwner = userDetails?.user._id === product?.owner;
 
-    //Redirige a home al hacer click en el heart Button
-    const handleHeartButtonClick = (e: any) => {
-        e.preventDefault();
+    //Lógica para que el usuario añada como el anuncio como Favorito
+    async function toggleFavoriteAdvert(advertId: string, token: string) {
+        try {
+            const response = await fetch(
+                `https://coderstrikeback.es/api/user/favorite/${advertId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-        // Asi mostramos los mensajes de info al usuario
-        showInfoMessage('Heart button clicked');
-        router.push(`/`);
+            if (response.ok) {
+                showSuccessMessage(
+                    'Anuncio agregado/eliminado de favoritos exitosamente'
+                );
+            } else {
+                const responseData = await response.json();
+                showErrorMessage(responseData.message);
+            }
+        } catch (error) {
+            console.error(error);
+            showErrorMessage(
+                'Error inesperando intentando agregar/eliminar anuncio a Favoritos'
+            );
+        }
+    }
+
+    const handleToggleFavorite = async (advertId: string) => {
+        try {
+            if (!token) {
+                console.error('Token no disponible');
+                return;
+            }
+            await toggleFavoriteAdvert(advertId, token);
+            setIsFavorite((prevState) => !prevState);
+        } catch (error) {
+            console.error('Error al agregar/eliminar de favoritos:', error);
+        }
     };
 
     //Borrar un anuncio
@@ -142,10 +196,41 @@ export default function Page({ params: { id } }: Props) {
         }
     };
 
+    //Lógica para enviar un mail al propietario del anuncio
+    const sendEmailToVendor = async () => {
+        try {
+            setIsEmailSending(true);
+
+            const response = await fetch(
+                'https://coderstrikeback.es/api/contactvendor',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ advertId: id }),
+                }
+            );
+
+            if (response.ok) {
+                showSuccessMessage('Correo enviado al vendedor');
+            } else {
+                const responseData = await response.json();
+                showErrorMessage(responseData.message);
+            }
+        } catch (error) {
+            console.error('Error al enviar el correo:', error);
+            showErrorMessage('Error al enviar el correo');
+        } finally {
+            setIsEmailSending(false);
+        }
+    };
+
     // Esta es la función que se encargará de mostrar el mensaje del popUp (leer documentacion de primeReact)
     const confirm1 = () => {
         confirmDialog({
-            message: 'Are you sure you want to proceed?',
+            message: '¿Estás seguro que quieres eliminar el anuncio?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => confirmDeleteAdvert(),
@@ -153,13 +238,13 @@ export default function Page({ params: { id } }: Props) {
     };
 
     // Si no hay product o no hay owner, el componente mostrará un loading (porque aún se está cargando)
-    const isLoading = !product || !owner;   
+    const isLoading = !product || !owner;
 
     // Si está cargando mostraremos un ... is loading (Esto puede ser temporal o mostrar un componente loader)
     // Si tenemos producto y owner, mostramos el componente con los detalles del producto
-    return isLoading 
-        ? <p>... is loadking</p> 
-        : (
+    return isLoading ? (
+        <p>... is loading</p>
+    ) : (
         <div className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted">
             <div className="shadow-2 p-3 h-full flex flex-column surface-card lg:w-7">
                 <div className="flex justify-content-between align-items-center mb-3">
@@ -177,41 +262,108 @@ export default function Page({ params: { id } }: Props) {
                         </Avatar>
                         <span className="px-3">{owner.username}</span>
                     </div>
-                    <div className="flex justify-content-between align-items-center gap-2">
-                        {isLogged && isOwner ? (
-                            <div className="flex justify-content-between align-items-center gap-2">
-                                <Button
-                                    onClick={(e) => handleHeartButtonClick(e)}
-                                    icon="pi pi-heart"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                                />
 
+                    <div className="flex justify-content-between align-items-center gap-2">
+                        {isLogged ? (
+                            isOwner ? (
+                                // Si está logueado y es propietario del anuncio
+                                <div className="flex justify-content-between align-items-center gap-2">
+                                    <Link
+                                        href={{
+                                            pathname: `/editAdvert/${id}`,
+                                        }}
+                                    >
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                        />
+                                    </Link>
+                                    <Button
+                                        icon="pi pi-trash"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
+                                        onClick={confirm1}
+                                    />
+                                    <Button
+                                        icon="pi pi-twitter"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-info p-button p-component p-button-icon-only"
+                                        onClick={() => {
+                                            const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+                                            window.open(twitterUrl, '_blank');
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                // Si está logueado pero no es propietario del anuncio
+                                <div className="flex justify-content-between align-items-center gap-2">
+                                    <Button
+                                        onClick={() =>
+                                            handleToggleFavorite(product?._id)
+                                        }
+                                        icon="pi pi-heart"
+                                        className={`cursor-pointer p-element p-ripple p-button p-button-rounded ${
+                                            isFavorite
+                                                ? ''
+                                                : 'p-button-outlined'
+                                        } p-button p-component p-button-icon-only`}
+                                    />
+                                    <Button
+                                        icon="pi pi-twitter"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-info p-button p-component p-button-icon-only"
+                                        onClick={() => {
+                                            const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+                                            window.open(twitterUrl, '_blank');
+                                        }}
+                                    />
+                                    <Button
+                                        onClick={sendEmailToVendor}
+                                        className="p-button-outlined"
+                                        style={{
+                                            backgroundColor:
+                                                'rgb(226, 226, 255)',
+                                        }}
+                                        label={
+                                            isEmailSending
+                                                ? 'Enviando correo...'
+                                                : 'Contacta con el vendedor'
+                                        }
+                                    ></Button>
+                                </div>
+                            )
+                        ) : (
+                            // Si no está logueado
+                            <div className="flex justify-content-between align-items-center gap-2">
                                 <Link
                                     href={{
-                                        pathname: `/editAdvert/${id}`,
+                                        pathname: `/login`,
                                     }}
                                 >
                                     <Button
-                                        icon="pi pi-pencil"
-                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-outlined p-button p-component p-button-icon-only"
+                                        icon="pi pi-heart"
+                                        className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
                                     />
                                 </Link>
                                 <Button
-                                    icon="pi pi-trash"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-danger p-button-outlined p-button p-component p-button-icon-only"
-                                    // onClick={handleDeleteAdvert}
-                                    onClick={confirm1}
+                                    icon="pi pi-twitter"
+                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-secondary p-button-info p-button p-component p-button-icon-only"
+                                    onClick={() => {
+                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+                                        window.open(twitterUrl, '_blank');
+                                    }}
                                 />
-                                <Button label="Chat"></Button>
-                            </div>
-                        ) : (
-                            <div className="flex justify-content-between align-items-center gap-2">
-                                <Button
-                                    onClick={(e) => handleHeartButtonClick(e)}
-                                    icon="pi pi-heart"
-                                    className="cursor-pointer p-element p-ripple p-button p-button-rounded p-button-help p-button-outlined p-button p-component p-button-icon-only"
-                                />
-                                <Button label="Chat"></Button>
+                                <Link
+                                    href={{
+                                        pathname: `/login`,
+                                    }}
+                                >
+                                    <Button
+                                        className="p-button-outlined"
+                                        style={{
+                                            backgroundColor:
+                                                'rgb(226, 226, 255)',
+                                        }}
+                                        label="Contacta con el vendedor"
+                                    ></Button>
+                                </Link>
                             </div>
                         )}
                     </div>
@@ -228,10 +380,27 @@ export default function Page({ params: { id } }: Props) {
                         style={{ objectFit: 'cover' }}
                     />
                 </div>
-                <div className="flex align-items-center">
+                <div className="flex gap-4 align-items-center">
                     <span className="font-bold text-2xl text-900">
                         {product.price} €
                     </span>
+                    {product.status ? (
+                        <span className="flex align-items-center">
+                            <i
+                                className="pi pi-cart-plus text-gray-500 mr-1"
+                                style={{ fontSize: '1.5rem' }}
+                            ></i>
+                            <span className="font-medium">En venta</span>
+                        </span>
+                    ) : (
+                        <span className="flex align-items-center">
+                            <i
+                                className="pi pi-money-bill text-gray-500 mr-1"
+                                style={{ fontSize: '1.5rem' }}
+                            ></i>
+                            <span className="font-medium">Comprando</span>
+                        </span>
+                    )}
                 </div>
                 <div className="flex justify-content-between align-items-center mb-3">
                     <span className="text-900 font-medium text-xl">
@@ -245,7 +414,7 @@ export default function Page({ params: { id } }: Props) {
                 <p className="mt-0 mb-3 text-600 line-height-3">
                     {product.description}
                 </p>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap align-items-center gap-2 mb-3">
                     <Tags tags={product.tags} />
                 </div>
                 <hr className="my-3 mx-0 border-top-1 border-none surface-border" />

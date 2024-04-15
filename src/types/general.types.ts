@@ -14,6 +14,7 @@ export interface UserDetails {
     user: {
         email: string;
         username: string;
+        favorites: string[];
         _id: string;
     };
 }
