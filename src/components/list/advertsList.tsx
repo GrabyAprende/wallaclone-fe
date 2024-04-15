@@ -1,9 +1,12 @@
 import { Carousel } from 'primereact/carousel';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Advert } from '@/types/general.types';
 
-async function getData() {
-    const res = await fetch('https://coderstrikeback.es/api/adverts');
+async function getData(tag: string | undefined) {
+    const res = tag 
+    ? await fetch(`https://coderstrikeback.es/api/adverts?tags=${tag}`) 
+    : await fetch(`https://coderstrikeback.es/api/adverts`);
                              
 
     if (!res.ok) {
@@ -13,8 +16,8 @@ async function getData() {
     return res.json();
 }
 
-export default async function AdvertsListFetch() {
-    const products = await getData();
+export default async function AdvertsListFetch({tag} : { tag?: string | undefined}) {
+    const products = await getData(tag);
 
     const carouselResponsiveOptions = [
         {
