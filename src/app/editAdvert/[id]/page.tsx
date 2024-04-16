@@ -138,6 +138,8 @@ export default function Page({ params: { id } }: Props) {
                 return;
             }
 
+            newAdvertData.tags = selectedTags;
+
             const response = await fetch(
                 `https://coderstrikeback.es/api/advert/${id}`,
                 {
@@ -146,7 +148,7 @@ export default function Page({ params: { id } }: Props) {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ newAdvertData, tags: selectedTags }),
+                    body: JSON.stringify(newAdvertData),
                 }
             );
             if (response.ok) {
