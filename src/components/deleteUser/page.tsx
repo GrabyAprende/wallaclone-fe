@@ -1,12 +1,11 @@
-import { MessagesContext } from "@/context/messagesContext";
-import { SessionContext } from "@/context/sessionContext";
-import { useRouter } from "next/navigation";
-import { Button } from "primereact/button";
-import { useContext, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { FormField } from "../form/formField";
-import { Dialog } from "primereact/dialog";
-
+import { MessagesContext } from '@/context/messagesContext';
+import { SessionContext } from '@/context/sessionContext';
+import { useRouter } from 'next/navigation';
+import { Button } from 'primereact/button';
+import { useContext, useEffect, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { FormField } from '../form/formField';
+import { Dialog } from 'primereact/dialog';
 
 type Inputs = {
     username: string;
@@ -15,9 +14,29 @@ type Inputs = {
 const DeleteAccount = ({ username }: { username: string }) => {
     const router = useRouter();
     const { showErrorMessage } = useContext(MessagesContext);
-    const { token, logout } = useContext(SessionContext)
+    const { token, logout } = useContext(SessionContext);
 
-    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Inputs>();
     const [visible, setVisible] = useState<boolean>(false);
 
     const headerElement = (
@@ -30,14 +49,17 @@ const DeleteAccount = ({ username }: { username: string }) => {
         const { username } = data;
 
         try {
-            const response = await fetch('https://coderstrikeback.es/api/deleteuser', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ username }),
-            });
+            const response = await fetch(
+                'https://coderstrikeback.es/api/deleteuser',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ username }),
+                }
+            );
             if (response.ok) {
                 logout();
                 router.push('/login');
@@ -46,22 +68,45 @@ const DeleteAccount = ({ username }: { username: string }) => {
                 // Así mostramos los mensajes de error al usuario
                 showErrorMessage(data.message);
                 console.error({ error: data.message });
-                
             }
-
         } catch (err) {
             console.log({ err });
             showErrorMessage('Error al eliminar usuario');
         } finally {
-            setVisible(false)
+            setVisible(false);
         }
     };
     return (
         <div>
-            <div className="card flex justify-content-center">
-                <Button label="Borrar cuenta" className="p-button-danger w-full" onClick={() => setVisible(true)} />
-                <Dialog visible={visible} modal header={headerElement} style={{ width: '50rem' }} onHide={() => setVisible(false)}>
-                    <p className="m-0">Para borrar tu cuenta debes agregar tu nombre de usuario
+            <div className="card flex justify-content-start">
+                {isMobile ? (
+                    <Button
+                        icon="pi pi-trash"
+                        label="Borrar cuenta"
+                        className="p-button-danger p-button-icon-only cursor-pointer p-element p-ripple p-button p-button-rounded p-button p-component"
+                        onClick={() => setVisible(true)}
+                    />
+                ) : (
+                    <Button
+                        label="Borrar cuenta"
+                        className="p-button-danger w-full"
+                        onClick={() => setVisible(true)}
+                    />
+                )}
+                {/* <Button
+                    label="Borrar cuenta"
+                    className="p-button-danger w-full"
+                    onClick={() => setVisible(true)}
+                /> */}
+                <Dialog
+                    visible={visible}
+                    modal
+                    header={headerElement}
+                    style={{ width: '50rem' }}
+                    onHide={() => setVisible(false)}
+                >
+                    <p className="m-0">
+                        Para borrar tu cuenta debes agregar tu nombre de usuario
                     </p>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         {/* INPUT USERNAME */}
@@ -83,8 +128,8 @@ const DeleteAccount = ({ username }: { username: string }) => {
                         <Button
                             label="Eliminar usuario"
                             className="w-full p-3 text-xl p-button-danger"
-                            type="submit">
-                        </Button>
+                            type="submit"
+                        ></Button>
                     </form>
                 </Dialog>
             </div>
@@ -93,4 +138,3 @@ const DeleteAccount = ({ username }: { username: string }) => {
 };
 
 export default DeleteAccount;
-

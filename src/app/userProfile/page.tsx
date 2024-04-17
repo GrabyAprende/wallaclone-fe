@@ -40,15 +40,14 @@ const UserPage = () => {
 
                 const data = await response.json();
                 setUserAdverts(data.adverts);
-            
             } catch (error) {
                 console.error(error);
             }
         };
-        
+
         if (token) {
             fetchUserAdverts();
-        };
+        }
     }, [token]);
 
     useEffect(() => {
@@ -71,7 +70,6 @@ const UserPage = () => {
 
                 const data = await response.json();
                 const favoriteIds = data.user.favorites;
-            
 
                 const advertPromises = favoriteIds.map(
                     async (advertId: string) => {
@@ -89,7 +87,7 @@ const UserPage = () => {
 
                 const favoriteAdvertsData = await Promise.all(advertPromises);
                 setFavoriteAdverts(favoriteAdvertsData);
-                setUsername(data.user?.username || '')
+                setUsername(data.user?.username || '');
             } catch (error) {
                 console.error(error);
             }
@@ -147,7 +145,7 @@ const UserPage = () => {
 
     return (
         <div
-            className="flex"
+            className="flex lg:flex-row md:flex-row sm:flex-column flex-column"
             style={{
                 borderTopStyle: 'solid',
                 borderTopWidth: '1px',
@@ -161,19 +159,24 @@ const UserPage = () => {
                     borderRightColor: 'rgb(207 216 226 / 90%)',
                     flexDirection: 'column',
                 }}
-                className="col-2 py-4 px-4 surface-section h-screen border-right-1 surface-border flex flex-column w-18rem select-none left-0 top-0"
+                className="py-4 px-4 surface-section md:h-screen w-full md:w-6 lg:w-2 border-right-1 surface-border flex justify-content-between md:flex-column md:justify-content-start select-none left-0 top-0"
             >
-                <span className="text-900 font-medium text-xl">
-                    {userDetails?.user.username}
-                </span>
-                <span className="py-2">{userDetails?.user.email}</span>
-            <DeleteAccount username={username}/>
+                <div className="flex flex-column">
+                    <span className="text-900 font-medium text-xl">
+                        {userDetails?.user.username}
+                    </span>
+                    <span className="py-2">{userDetails?.user.email}</span>
+                </div>
+                <DeleteAccount username={username} />
             </div>
-            <div className="col-10 xl:col-10">
-                <TabView>
-                    <TabPanel header="Mis anuncios">
+            <div className="w-full">
+                <TabView className="sm:px-2">
+                    <TabPanel
+                        header="Mis anuncios"
+                        className="px-8 md:px-2 sm:px-2"
+                    >
                         <div className="flex justify-content-center text-1xl">
-                            <div className="col-10 xl:col-10">
+                            <div className="w-full">
                                 <h5 className="text-1xl font-small text-900 mt-6 mb-2">
                                     Mis Anuncios
                                 </h5>
@@ -181,7 +184,7 @@ const UserPage = () => {
                                     value={userAdverts}
                                     scrollable
                                     scrollHeight="550px"
-                                    style={{ minWidth: '50rem' }}
+                                    className="md:px-2 sm:px-2"
                                 >
                                     <Column
                                         header="Foto"
@@ -212,7 +215,7 @@ const UserPage = () => {
                                     <Column
                                         header=""
                                         body={(rowData) => (
-                                            <div className="flex gap-2">
+                                            <div className="gap-2 md:flex lg:flex">
                                                 <Link
                                                     href={{
                                                         pathname: `/editAdvert/${rowData._id}`,
@@ -238,9 +241,12 @@ const UserPage = () => {
                             </div>
                         </div>
                     </TabPanel>
-                    <TabPanel header="Favoritos">
+                    <TabPanel
+                        header="Favoritos"
+                        className="px-8 md:px-2 sm:px-2"
+                    >
                         <div className="flex justify-content-center">
-                            <div className="col-10 xl:col-10">
+                            <div className="w-full">
                                 <h5 className="text-1xl font-medium text-900 mt-6 mb-2">
                                     Favoritos
                                 </h5>
@@ -248,6 +254,7 @@ const UserPage = () => {
                                     value={favoriteAdverts}
                                     layout="grid"
                                     itemTemplate={favoriteProductTemplate}
+                                    className="md:px-2 sm:px-2"
                                 />
                             </div>
                         </div>
