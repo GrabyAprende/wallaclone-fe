@@ -23,12 +23,10 @@ const LoginPage = () => {
     const router = useRouter(); // accedemos al obj router para la navegación
 
     const { layoutConfig } = useContext(LayoutContext); //accedemos al estado global de la app
-    // Recogemos del contexto MessageContext, 
+    // Recogemos del contexto MessageContext,
     // las estructuras (funciones) de mensajes que usaremos
-    const { showSuccessMessage,
-        showInfoMessage,
-        showErrorMessage
-    } = useContext(MessagesContext); 
+    const { showSuccessMessage, showInfoMessage, showErrorMessage } =
+        useContext(MessagesContext);
 
     const containerClassName = classNames(
         'surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden',
@@ -62,19 +60,17 @@ const LoginPage = () => {
 
                 handleNewToken(token);
                 // Así mostramos los mensajes de exito al usuario
-                showSuccessMessage("Login success")
+                showSuccessMessage('Login success');
 
                 return router.push('/');
             } else {
                 const errorLoginData = await loginResponse.json();
                 // Así mostramos los mensajes de error al usuario
                 showErrorMessage(errorLoginData.error);
-                console.log({ error: errorLoginData });
             }
         } catch (err) {
-            console.log(err);
             // Así mostramos los mensajes de error al usuario
-            showErrorMessage("Hubo un error al intentar recuperar el usuario");
+            showErrorMessage('Hubo un error al intentar recuperar el usuario');
         }
     };
 
@@ -135,9 +131,13 @@ const LoginPage = () => {
                                     <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
                                     <label htmlFor="rememberme1">Recordar</label>
                                 </div> */}
-                                <Link href="/password-recovery" passHref
-                                    className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
-                                        ¿Has olvidado tu contraseña?
+                                <Link
+                                    href="/password-recovery"
+                                    passHref
+                                    className="font-medium no-underline ml-2 text-right cursor-pointer"
+                                    style={{ color: 'var(--primary-color)' }}
+                                >
+                                    ¿Has olvidado tu contraseña?
                                 </Link>
                             </div>
 
