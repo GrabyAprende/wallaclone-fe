@@ -39,7 +39,8 @@ export const PasswordField: FC<Props> = ({
                 placeholder={placeholder}
                 toggleMask={toggleMask}
                 feedback={false}
-                inputClassName={classNames("w-full", "md:w-30rem", "p-3", {
+                className="w-full"
+                inputClassName={classNames("w-full", "p-3", {
                     "p-invalid": !!errorMessage,
                 })}
                 {...rest}

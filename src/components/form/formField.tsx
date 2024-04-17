@@ -34,7 +34,7 @@ export const FormField: FC<Props> = ({
                 id={fieldId}
                 type={type}
                 placeholder={placeholder}
-                className={classNames("w-full", "md:w-30rem", "p-3", {
+                className={classNames("w-full", "p-3", {
                     "p-invalid": !!errorMessage,
                 })}
                 {...register(fieldId, rules)}

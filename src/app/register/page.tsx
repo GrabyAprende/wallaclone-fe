@@ -20,8 +20,7 @@ type Inputs = {
 const SignUpPage = () => {
     const { layoutConfig } = useContext(LayoutContext);
 
-    // Recogemos del contexto MessageContext, 
-    // las estructuras (funciones) de mensajes que usaremos
+    // Recogemos del contexto MessageContext, las estructuras (funciones) de mensajes que usaremos
     const { 
         showErrorMessage
     } = useContext(MessagesContext); 
@@ -126,51 +125,7 @@ const SignUpPage = () => {
                             />
 
                             {/* PASSWORD */}
-                            <PasswordFieldsSet watch={watch} register={register} errors={errors} />
-
-
-                            {/* <PasswordField
-                                fieldId="password"
-                                label="Contraseña"
-                                placeholder="Contraseña"
-                                register={register}
-                                errorMessage={errors.password?.message || ''}
-                                toggleMask
-                                rules={{
-                                    required: 'Contraseña requerida',
-                                    minLength: {
-                                        value: 8,
-                                        message: 'Mínimo 8 caracteres',
-                                    },
-                                    validate: (value) =>
-                                        isStrongPassword(value, {
-                                            minLowercase: 1,
-                                            minUppercase: 1,
-                                            minNumbers: 1,
-                                            minSymbols: 1,
-                                        }) ||
-                                        'La contraseña debe tener mayúscula, número, símbolos y minúscula',
-                                }}
-                            />
-
-                            {/* PASSWORD CONFIRMATION */}
-                            {/* <PasswordField 
-                                fieldId="confirmPassword"
-                                label="Repite la contraseña"
-                                placeholder="Repite la contraseña"
-                                register={register}
-                                errorMessage={
-                                    errors.confirmPassword?.message || ''
-                                }
-                                toggleMask
-                                rules={{
-                                    required:
-                                        'Confirmación de Password requerida',
-                                    validate: (value) =>
-                                        value === password ||
-                                        'Passwords no coinciden',
-                                }}
-                            /> */}
+                            <PasswordFieldsSet watch={watch} register={register} errors={errors}/>
 
                             {/* BOTON PARA REGISTRARSE */}
                             <Button
