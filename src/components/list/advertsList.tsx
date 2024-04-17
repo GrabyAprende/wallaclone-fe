@@ -4,16 +4,23 @@ import Link from 'next/link';
 import { Advert } from '@/types/general.types';
 
 async function getData(tag: string | undefined) {
-    const res = tag 
-    ? await fetch(`https://coderstrikeback.es/api/adverts?tags=${tag}`) 
-    : await fetch(`https://coderstrikeback.es/api/adverts`);
-                             
-
-    if (!res.ok) {
-        console.log('error');
+    try {
+        const res = tag 
+            ? await fetch(`https://coderstrikeback.es/api/adverts?tags=${tag}`) 
+            : await fetch(`https://coderstrikeback.es/api/adverts`); 
+    
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        } else {
+            const errorData = await res.json();
+            console.error("Error en adversList", errorData.message)
+        }
+    
+    } catch (err) {
+        console.error("Error inesperado en adversList", err)
+        throw err;
     }
-
-    return res.json();
 }
 
 export default async function AdvertsListFetch({tag} : { tag?: string | undefined}) {

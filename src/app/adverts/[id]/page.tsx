@@ -20,19 +20,38 @@ interface Props {
 }
 
 async function getData(id: string) {
-    const res = await fetch(`https://coderstrikeback.es/api/advert/id/${id}`);
-    if (!res.ok) {
-        console.log(res);
+    try {
+        const res = await fetch(`https://coderstrikeback.es/api/advert/id/${id}`);
+
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        } else {
+            const errorData = await res.json();
+            console.error("Error en adverts getData", errorData.message)
+        }
+    } catch (err) {
+        console.error("Error inesperado en adverts getData", err)
+        throw err;
     }
-    return res.json();
 }
 
 async function getUserData(id: string) {
-    const res = await fetch(`https://coderstrikeback.es/api/get-user/${id}`);
-    if (!res.ok) {
-        console.log(res);
+    try {
+        const res = await fetch(`https://coderstrikeback.es/api/get-user/${id}`);
+
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        } else {
+            const errorData = await res.json();
+            console.error("Error en adverts getUserData", errorData.message)
+        }
+        
+    } catch (err) {
+        console.error("Error inesperado en adverts getData", err)
+        throw err;
     }
-    return res.json();
 }
 
 async function fetchUserFavorites(token: string) {
@@ -47,12 +66,14 @@ async function fetchUserFavorites(token: string) {
             }
         );
 
-        if (!response.ok) {
-            throw new Error('Error al traer favoritos');
+        if(response.ok) {
+            const userData = await response.json();
+            return userData.user.favorites;
+        } else {
+            const errorData = await response.json();
+            throw new Error('Error al traer favoritos', errorData.message);
         }
 
-        const userData = await response.json();
-        return userData.user.favorites;
     } catch (error) {
         console.error('Error al traer favoritos:', error);
         throw error;
@@ -413,8 +434,9 @@ export default function Page({ params: { id } }: Props) {
                         height={400}
                         src={product.image}
                         alt="product image"
-                        className="w-full"
+                        className="w-full h-auto"
                         style={{ objectFit: 'cover' }}
+                        priority={true}
                     />
                 </div>
                 <div className="flex gap-4 align-items-center">
