@@ -40,7 +40,7 @@ const DeleteAccount = ({ username }: { username: string }) => {
             });
             if (response.ok) {
                 logout();
-                router.push('/');
+                router.push('/login');
             } else {
                 const data = await response.json();
                 // Así mostramos los mensajes de error al usuario
