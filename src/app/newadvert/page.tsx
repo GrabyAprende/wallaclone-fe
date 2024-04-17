@@ -203,22 +203,27 @@ export default function NewAdvertPage() {
     };
 
     return (
-        <div
-            style={{
-                flexDirection: 'column',
-            }}
-            className="align-items-center flex justify-content-center lg:px-8 md:px-6 px-4 py-8 surface-ground ng-star-inserted"
-        >
-            <h2>Sube tu anuncio</h2>
-            <div
-                className="px-3 py-4 w-full h-full flex flex-column surface-card lg:w-7"
-                style={{
-                    borderRadius: '20px',
-                }}
-            >
-                <h5>Información del producto</h5>
-                <div className="mt-4 p-col-6">
-                    <form onSubmit={handleSubmit}>
+        <div className="flex flex-column align-items-center justify-content-center">
+                <div
+                    style={{
+                        borderRadius: '56px',
+                        padding: '0.3rem',
+                        background:
+                            'linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)',
+                    }}
+                    className="lg:w-4"
+                >
+                    <div
+                        className="w-full surface-card py-8 px-5 sm:px-8"
+                        style={{ borderRadius: '53px' }}
+                    >
+                        <div className="text-center mb-5">
+                            <div className="text-900 text-3xl font-medium mb-3">
+                                Sube tu anuncio
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleSubmit}>
                         <div className="p-field mb-3">
                             <label
                                 className="block font-medium mb-2"
@@ -344,8 +349,8 @@ export default function NewAdvertPage() {
                             type="submit"
                         />
                     </form>
+                    </div>
                 </div>
-            </div>
         </div>
     );
 }
