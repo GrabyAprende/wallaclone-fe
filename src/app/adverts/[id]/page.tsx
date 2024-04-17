@@ -35,6 +35,30 @@ async function getUserData(id: string) {
     return res.json();
 }
 
+async function fetchUserFavorites(token: string) {
+    try {
+        const response = await fetch(
+            'https://coderstrikeback.es/api/adverts-user',
+            {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Error al traer favoritos');
+        }
+
+        const userData = await response.json();
+        return userData.user.favorites;
+    } catch (error) {
+        console.error('Error al traer favoritos:', error);
+        throw error;
+    }
+}
+
 const Tags = ({ tags }: { tags: Advert['tags'] }) =>
     tags.map((tag, index) => (
         <Tag key={index} value={tag} className="p-element">
@@ -61,7 +85,6 @@ export default function Page({ params: { id } }: Props) {
 
     //Estate de Favorito
     const [isFavorite, setIsFavorite] = useState(false);
-
     //Para compartir el anuncio en Twitter
     const [twitterText, setTwitterText] = useState('');
     //Para contactar al vendedor
@@ -73,17 +96,17 @@ export default function Page({ params: { id } }: Props) {
         try {
             const fetchedProduct: Advert = (await getData(id)) as Advert;
             setProduct(fetchedProduct);
+            if (token) {
+                const userFavorites = await fetchUserFavorites(token);
+                setIsFavorite(
+                    userFavorites.includes(fetchedProduct._id) || isFavorite
+                );
+            }
         } catch (error) {
             // Así mostramos los mensajes de error al usuario
             showErrorMessage('Error fetching product');
         }
     };
-
-    // Cuando el componente cargue, llamamos a la funcion
-    // para hacer la carga del producto
-    useEffect(() => {
-        fetchProduct();
-    }, []);
 
     // Verifico si el anuncio es favorito
     useEffect(() => {
@@ -99,6 +122,11 @@ export default function Page({ params: { id } }: Props) {
             setTwitterText(encodeURIComponent(tweetText));
         }
     }, [product]);
+
+    // Cuando el componente cargue, llamamos a la funcion para hacer la carga del producto
+    useEffect(() => {
+        fetchProduct();
+    }, []);
 
     // Cuando el producto cambie (la primera vez de null al producto obtenido)
     // Si hay producto, obtendremos los datos del propietario (owner) y lo pondremos en su estado con setOwner
@@ -163,12 +191,9 @@ export default function Page({ params: { id } }: Props) {
 
     const handleToggleFavorite = async (advertId: string) => {
         try {
-            if (!token) {
-                console.error('Token no disponible');
-                return;
-            }
             await toggleFavoriteAdvert(advertId, token);
-            setIsFavorite((prevState) => !prevState);
+            const updatedFavorites = await fetchUserFavorites(token); // Traigo a los favoritos del backend
+            setIsFavorite(updatedFavorites.includes(advertId)); // Actaulizo el estado isFavorite
         } catch (error) {
             console.error('Error al agregar/eliminar de favoritos:', error);
         }
