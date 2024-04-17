@@ -67,40 +67,6 @@ export const Header = () => {
                             <i className="pi pi-search absolute right-0 top-0 cursor-pointer text-400 p-3" onClick={handleSubmitSearch} />
                         </span>
                     </div>
-
-                    {/* NAVEGACION */}
-                    {/* <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
-                        <li>
-                            <Link
-                                href="/hogar-y-vida"
-                                onClick={toggleMenuItemClick}
-                                className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3"
-                            >
-                                <span>Hogar y vida</span>
-                                <Ripple />
-                            </Link>
-                        </li>
-                        <li>
-                            <a
-                                href="#features"
-                                onClick={toggleMenuItemClick}
-                                className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3"
-                            >
-                                <span>Moda y Accesorios</span>
-                                <Ripple />
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#highlights"
-                                onClick={toggleMenuItemClick}
-                                className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3"
-                            >
-                                <span>Motor</span>
-                                <Ripple />
-                            </a>
-                        </li>
-                    </ul> */}
                 </div>
 
                 <div className="flex justify-content-end py-3 md:flex-column md:ml-5">
@@ -113,7 +79,7 @@ export const Header = () => {
                             >
                                 <div className="flex align-items-center cursor-pointer">
                                     <h4 className="mb-0 mr-2">
-                                        {userDetails?.user.username}
+                                        {userDetails?.user?.username || ''}
                                     </h4>
                                     <i
                                         className="pi pi-user"

@@ -11,11 +11,13 @@ import { DataView } from 'primereact/dataview';
 import { Column } from 'primereact/column';
 import { MessagesContext } from '@/context/messagesContext';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import DeleteAccount from '@/components/deleteUser/page';
 
 const UserPage = () => {
     const { token, userDetails } = useContext(SessionContext);
     const [userAdverts, setUserAdverts] = useState<Advert[]>([]);
     const [favoriteAdverts, setFavoriteAdverts] = useState<Advert[]>([]);
+    const [username, setUsername] = useState<string>('');
 
     const { showSuccessMessage, showInfoMessage, showErrorMessage } =
         useContext(MessagesContext);
@@ -38,13 +40,15 @@ const UserPage = () => {
 
                 const data = await response.json();
                 setUserAdverts(data.adverts);
-                console.log(data);
+            
             } catch (error) {
                 console.error(error);
             }
         };
-
-        fetchUserAdverts();
+        
+        if (token) {
+            fetchUserAdverts();
+        };
     }, [token]);
 
     useEffect(() => {
@@ -67,6 +71,7 @@ const UserPage = () => {
 
                 const data = await response.json();
                 const favoriteIds = data.user.favorites;
+            
 
                 const advertPromises = favoriteIds.map(
                     async (advertId: string) => {
@@ -84,12 +89,15 @@ const UserPage = () => {
 
                 const favoriteAdvertsData = await Promise.all(advertPromises);
                 setFavoriteAdverts(favoriteAdvertsData);
+                setUsername(data.user?.username || '')
             } catch (error) {
                 console.error(error);
             }
         };
 
-        fetchFavoriteAdverts();
+        if (token) {
+            fetchFavoriteAdverts();
+        }
     }, [token]);
 
     const confirmDeleteAdvert = async (advertId: string) => {
@@ -153,12 +161,13 @@ const UserPage = () => {
                     borderRightColor: 'rgb(207 216 226 / 90%)',
                     flexDirection: 'column',
                 }}
-                className="flex col-2 py-4 px-4 surface-section h-screen border-right-1 surface-border flex flex-column w-18rem select-none left-0 top-0"
+                className="col-2 py-4 px-4 surface-section h-screen border-right-1 surface-border flex flex-column w-18rem select-none left-0 top-0"
             >
                 <span className="text-900 font-medium text-xl">
                     {userDetails?.user.username}
                 </span>
                 <span className="py-2">{userDetails?.user.email}</span>
+            <DeleteAccount username={username}/>
             </div>
             <div className="col-10 xl:col-10">
                 <TabView>
